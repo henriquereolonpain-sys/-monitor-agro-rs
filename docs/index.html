@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitor Agro RS — Preços & Clima · Passo Fundo</title>
+<meta name="description" content="Séries diárias de milho, soja e trigo (praças do Planalto Médio/RS) cruzadas com clima observado de Passo Fundo. Pipeline aberto, dados versionados em git.">
+<style>
+  :root {
+    --surface-1: #fcfcfb;
+    --page: #f9f9f7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --grid: #e1e0d9;
+    --baseline: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+    --delta-up: #006300;
+    --delta-down: #b91c1c;
+    --milho: #2a78d6;   /* slot 1 · blue  */
+    --soja:  #1baf7a;   /* slot 2 · aqua  */
+    --trigo: #eda100;   /* slot 3 · yellow — sub-3:1 no claro: rótulos diretos + tabela cobrem */
+    --chuva: #6da7ec;   /* sequencial blue-300 (não confundir com a linha do milho) */
+    --temp:  #eb6834;   /* slot 8 · orange (semântica de calor; série única, sem legenda) */
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface-1: #1a1a19;
+      --page: #0d0d0d;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #898781;
+      --grid: #2c2c2a;
+      --baseline: #383835;
+      --border: rgba(255,255,255,0.10);
+      --delta-up: #0ca30c;
+      --delta-down: #e66767;
+      --milho: #3987e5;
+      --soja:  #199e70;
+      --trigo: #c98500;
+      --chuva: #5598e7;
+      --temp:  #d95926;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page); color: var(--text-primary);
+    line-height: 1.5; padding: 24px 16px 48px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  header h1 { font-size: 1.35rem; font-weight: 700; }
+  header .sub { color: var(--text-secondary); font-size: .9rem; margin-top: 2px; }
+  header .updated { color: var(--text-muted); font-size: .78rem; margin-top: 4px; }
+
+  .filtros { display: flex; gap: 8px; margin: 20px 0 16px; flex-wrap: wrap; }
+  .filtros button {
+    font: inherit; font-size: .82rem; padding: 5px 14px; cursor: pointer;
+    background: var(--surface-1); color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px;
+  }
+  .filtros button[aria-pressed="true"] {
+    color: var(--text-primary); font-weight: 600; border-color: var(--text-muted);
+  }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .tile .label { font-size: .8rem; color: var(--text-secondary); display: flex; align-items: center; gap: 7px; }
+  .tile .swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .tile .value { font-size: 1.7rem; font-weight: 600; margin-top: 2px; }
+  .tile .meta { font-size: .75rem; color: var(--text-muted); }
+  .tile .delta { font-size: .8rem; font-weight: 600; }
+  .tile .delta.up { color: var(--delta-up); }
+  .tile .delta.down { color: var(--delta-down); }
+
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; margin-top: 16px; position: relative;
+  }
+  .card h2 { font-size: .95rem; font-weight: 600; }
+  .card .desc { font-size: .78rem; color: var(--text-muted); margin-bottom: 8px; }
+  .legend { display: flex; gap: 16px; font-size: .78rem; color: var(--text-secondary); margin: 6px 0 2px; flex-wrap: wrap; }
+  .legend .key { display: inline-block; width: 14px; height: 0; border-top: 2px solid; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+  svg { display: block; width: 100%; height: auto; }
+  svg text { font-family: inherit; }
+
+  .tooltip {
+    position: fixed; pointer-events: none; z-index: 10; display: none;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.12); padding: 8px 11px; font-size: .78rem; min-width: 150px;
+  }
+  .tooltip .tt-date { color: var(--text-muted); margin-bottom: 4px; }
+  .tooltip .tt-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+  .tooltip .tt-key { width: 12px; height: 0; border-top: 2px solid; border-radius: 2px; flex: none; }
+  .tooltip .tt-val { font-weight: 600; margin-left: auto; padding-left: 12px; font-variant-numeric: tabular-nums; }
+  .tooltip .tt-name { color: var(--text-secondary); }
+
+  .corr { display: flex; gap: 20px; flex-wrap: wrap; font-size: .8rem; color: var(--text-secondary); }
+  .corr b { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+  details { margin-top: 16px; }
+  details summary { cursor: pointer; font-size: .85rem; color: var(--text-secondary); }
+  table { border-collapse: collapse; width: 100%; margin-top: 10px; font-size: .78rem; }
+  th, td { text-align: right; padding: 4px 10px; border-bottom: 1px solid var(--grid); font-variant-numeric: tabular-nums; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--text-muted); font-weight: 600; }
+  footer { margin-top: 28px; font-size: .75rem; color: var(--text-muted); }
+  footer a { color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Monitor Agro RS</h1>
+    <div class="sub">Milho, soja e trigo (praças do Planalto Médio/RS) × clima observado em Passo Fundo</div>
+    <div class="updated" id="updated"></div>
+  </header>
+
+  <nav class="filtros" id="filtros" aria-label="Período">
+    <button data-dias="30">30 dias</button>
+    <button data-dias="90" aria-pressed="true">90 dias</button>
+    <button data-dias="365">1 ano</button>
+    <button data-dias="0">Tudo</button>
+  </nav>
+
+  <section class="tiles" id="tiles"></section>
+
+  <section class="card">
+    <h2>Preço da saca de 60&nbsp;kg (R$)</h2>
+    <div class="desc">Fechamentos do mercado físico · Notícias Agrícolas</div>
+    <div class="legend" id="legendPrecos"></div>
+    <div id="chartPrecos"></div>
+  </section>
+
+  <section class="card">
+    <h2>Chuva diária (mm)</h2>
+    <div class="desc">Observado · Open-Meteo ERA5, Passo Fundo</div>
+    <div id="chartChuva"></div>
+  </section>
+
+  <section class="card">
+    <h2>Temperatura máxima diária (°C)</h2>
+    <div class="desc">Observado · Open-Meteo ERA5, Passo Fundo</div>
+    <div id="chartTemp"></div>
+  </section>
+
+  <section class="card" id="cardCorr" hidden>
+    <h2>Correlação preço × clima (janela móvel de 30 dias)</h2>
+    <div class="desc">Pearson · calculado no DuckDB a cada atualização do pipeline</div>
+    <div class="corr" id="corr"></div>
+  </section>
+
+  <details>
+    <summary>Ver dados em tabela (período selecionado)</summary>
+    <div style="overflow-x:auto"><table id="tabela"></table></div>
+  </details>
+
+  <footer>
+    Dados versionados em git e atualizados por GitHub Actions em dias úteis ·
+    <a href="https://github.com/henriquereolonpain-sys" rel="noopener">GitHub</a>
+  </footer>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+"use strict";
+
+const SERIES = [
+  { id: "milho", nome: "Milho", cor: "var(--milho)" },
+  { id: "soja",  nome: "Soja",  cor: "var(--soja)"  },
+  { id: "trigo", nome: "Trigo", cor: "var(--trigo)" },
+];
+const NS = "http://www.w3.org/2000/svg";
+const fmtBR = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt1 = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
+let DADOS = null;
+let diasFiltro = 90;
+
+function el(tag, attrs, parent) {
+  const n = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs || {})) n.setAttribute(k, v);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function dataMin() {
+  if (!diasFiltro) return null;
+  const d = new Date(); d.setDate(d.getDate() - diasFiltro);
+  return d.toISOString().slice(0, 10);
+}
+function filtrar(datas, ...cols) {
+  const min = dataMin();
+  const idx = datas.map((d, i) => (!min || d >= min) ? i : -1).filter(i => i >= 0);
+  return [idx.map(i => datas[i]), ...cols.map(c => idx.map(i => c[i]))];
+}
+function escalaX(datas, x0, x1) {
+  const t0 = Date.parse(datas[0]), t1 = Date.parse(datas[datas.length - 1]);
+  const span = Math.max(t1 - t0, 1);
+  return d => x0 + (Date.parse(d) - t0) / span * (x1 - x0);
+}
+function escalaY(vmin, vmax, y0, y1) {
+  const span = Math.max(vmax - vmin, 1e-9);
+  return v => y0 - (v - vmin) / span * (y0 - y1);
+}
+function ticksLimpos(vmin, vmax, n = 4) {
+  const bruto = (vmax - vmin) / n;
+  const mag = Math.pow(10, Math.floor(Math.log10(bruto)));
+  const passo = [1, 2, 2.5, 5, 10].map(m => m * mag).find(p => (vmax - vmin) / p <= n + 1) || mag * 10;
+  const ini = Math.ceil(vmin / passo) * passo;
+  const out = [];
+  for (let v = ini; v <= vmax + 1e-9; v += passo) out.push(+v.toFixed(6));
+  return out;
+}
+function mesCurto(iso) {
+  return new Date(iso + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+}
+
+/* ---------- tooltip ---------- */
+const tt = document.getElementById("tooltip");
+function mostrarTooltip(x, y, dataIso, linhas) {
+  tt.textContent = "";
+  const d = document.createElement("div");
+  d.className = "tt-date";
+  d.textContent = new Date(dataIso + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "short", year: "numeric" });
+  tt.appendChild(d);
+  for (const l of linhas) {
+    const row = document.createElement("div"); row.className = "tt-row";
+    const key = document.createElement("span"); key.className = "tt-key"; key.style.borderTopColor = l.cor;
+    const nome = document.createElement("span"); nome.className = "tt-name"; nome.textContent = l.nome;
+    const val = document.createElement("span"); val.className = "tt-val"; val.textContent = l.valor;
+    row.append(key, nome, val); tt.appendChild(row);
+  }
+  tt.style.display = "block";
+  const r = tt.getBoundingClientRect();
+  tt.style.left = Math.min(x + 14, window.innerWidth - r.width - 8) + "px";
+  tt.style.top = Math.max(8, Math.min(y - r.height / 2, window.innerHeight - r.height - 8)) + "px";
+}
+function esconderTooltip() { tt.style.display = "none"; }
+
+/* ---------- gráfico de linhas (preços) ---------- */
+function desenharLinhas(container, series, altura = 300) {
+  container.textContent = "";
+  const W = Math.max(container.clientWidth || 640, 320), H = altura;
+  const M = { t: 14, r: 74, b: 26, l: 46 };
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": "Série de preços por commodity" });
+  container.appendChild(svg);
+
+  const todasDatas = [...new Set(series.flatMap(s => s.datas))].sort();
+  if (!todasDatas.length) return;
+  const vs = series.flatMap(s => s.valores);
+  const vmin = Math.min(...vs), vmax = Math.max(...vs);
+  const folga = (vmax - vmin) * 0.08 || vmax * 0.05 || 1;
+  const X = escalaX(todasDatas, M.l, W - M.r);
+  const Y = escalaY(vmin - folga, vmax + folga, H - M.b, M.t);
+
+  for (const tv of ticksLimpos(vmin - folga, vmax + folga)) {
+    el("line", { x1: M.l, x2: W - M.r, y1: Y(tv), y2: Y(tv), stroke: "var(--grid)", "stroke-width": 1 }, svg);
+    el("text", { x: M.l - 8, y: Y(tv) + 4, "text-anchor": "end", "font-size": 11, fill: "var(--text-muted)" }, svg)
+      .textContent = fmt1.format(tv);
+  }
+  const nx = Math.min(6, todasDatas.length);
+  for (let i = 0; i < nx; i++) {
+    const d = todasDatas[Math.round(i * (todasDatas.length - 1) / Math.max(nx - 1, 1))];
+    el("text", { x: X(d), y: H - 8, "text-anchor": "middle", "font-size": 11, fill: "var(--text-muted)" }, svg)
+      .textContent = mesCurto(d);
+  }
+  el("line", { x1: M.l, x2: W - M.r, y1: H - M.b, y2: H - M.b, stroke: "var(--baseline)", "stroke-width": 1 }, svg);
+
+  const rotulos = [];
+  for (const s of series) {
+    if (!s.datas.length) continue;
+    const pts = s.datas.map((d, i) => `${X(d).toFixed(1)},${Y(s.valores[i]).toFixed(1)}`).join(" ");
+    el("polyline", { points: pts, fill: "none", stroke: s.cor, "stroke-width": 2,
+      "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+    const ux = X(s.datas[s.datas.length - 1]), uy = Y(s.valores[s.valores.length - 1]);
+    el("circle", { cx: ux, cy: uy, r: 4, fill: s.cor, stroke: "var(--surface-1)", "stroke-width": 2 }, svg);
+    rotulos.push({ ux, uy, texto: `${s.nome} ${fmt1.format(s.valores[s.valores.length - 1])}` });
+  }
+
+  // rótulos diretos no fim das linhas (regra de alívio p/ contraste do amarelo);
+  // quando linhas convergem, afasta os rótulos e liga com leader line
+  rotulos.sort((a, b) => a.uy - b.uy);
+  const MIN_GAP = 15;
+  for (let i = 1; i < rotulos.length; i++)
+    rotulos[i].ly = Math.max(rotulos[i].uy, (rotulos[i - 1].ly ?? rotulos[i - 1].uy) + MIN_GAP);
+  for (let i = rotulos.length - 1; i >= 0; i--) {
+    const teto = i < rotulos.length - 1 ? rotulos[i + 1].ly - MIN_GAP : H - M.b - 4;
+    rotulos[i].ly = Math.min(rotulos[i].ly ?? rotulos[i].uy, teto);
+  }
+  for (const r of rotulos) {
+    if (Math.abs(r.ly - r.uy) > 5)
+      el("line", { x1: r.ux + 5, y1: r.uy, x2: r.ux + 12, y2: r.ly,
+        stroke: "var(--baseline)", "stroke-width": 1 }, svg);
+    el("text", { x: r.ux + 14, y: r.ly + 4, "font-size": 11, "font-weight": 600,
+      fill: "var(--text-secondary)" }, svg).textContent = r.texto;
+  }
+
+  /* crosshair + tooltip com todas as séries */
+  const cross = el("line", { y1: M.t, y2: H - M.b, stroke: "var(--baseline)", "stroke-width": 1, visibility: "hidden" }, svg);
+  const hit = el("rect", { x: M.l, y: M.t, width: W - M.l - M.r, height: H - M.t - M.b, fill: "transparent" }, svg);
+  hit.addEventListener("pointermove", ev => {
+    const box = svg.getBoundingClientRect();
+    const mx = (ev.clientX - box.left) * (W / box.width);
+    let melhor = todasDatas[0], dist = Infinity;
+    for (const d of todasDatas) { const dd = Math.abs(X(d) - mx); if (dd < dist) { dist = dd; melhor = d; } }
+    cross.setAttribute("x1", X(melhor)); cross.setAttribute("x2", X(melhor));
+    cross.setAttribute("visibility", "visible");
+    const linhas = series.map(s => {
+      const i = s.datas.indexOf(melhor);
+      return i >= 0 ? { nome: s.nome, cor: getComputedStyle(document.documentElement).getPropertyValue(s.corVar) || s.cor, valor: "R$ " + fmtBR.format(s.valores[i]) } : null;
+    }).filter(Boolean);
+    if (linhas.length) mostrarTooltip(ev.clientX, ev.clientY, melhor, linhas);
+  });
+  hit.addEventListener("pointerleave", () => { cross.setAttribute("visibility", "hidden"); esconderTooltip(); });
+}
+
+/* ---------- gráfico de barras (chuva) ---------- */
+function desenharBarras(container, datas, valores, cor, unidade, altura = 190) {
+  container.textContent = "";
+  const W = Math.max(container.clientWidth || 640, 320), H = altura;
+  const M = { t: 12, r: 12, b: 26, l: 46 };
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Chuva diária em milímetros" });
+  container.appendChild(svg);
+  if (!datas.length) return;
+
+  const vmax = Math.max(...valores, 1);
+  const X = escalaX(datas, M.l, W - M.r);
+  const Y = escalaY(0, vmax * 1.06, H - M.b, M.t);
+  for (const tv of ticksLimpos(0, vmax * 1.06, 3)) {
+    el("line", { x1: M.l, x2: W - M.r, y1: Y(tv), y2: Y(tv), stroke: "var(--grid)", "stroke-width": 1 }, svg);
+    el("text", { x: M.l - 8, y: Y(tv) + 4, "text-anchor": "end", "font-size": 11, fill: "var(--text-muted)" }, svg)
+      .textContent = fmt1.format(tv);
+  }
+  const nx = Math.min(6, datas.length);
+  for (let i = 0; i < nx; i++) {
+    const d = datas[Math.round(i * (datas.length - 1) / Math.max(nx - 1, 1))];
+    el("text", { x: X(d), y: H - 8, "text-anchor": "middle", "font-size": 11, fill: "var(--text-muted)" }, svg)
+      .textContent = mesCurto(d);
+  }
+  el("line", { x1: M.l, x2: W - M.r, y1: H - M.b, y2: H - M.b, stroke: "var(--baseline)", "stroke-width": 1 }, svg);
+
+  const larg = Math.min(24, Math.max(2, (W - M.l - M.r) / datas.length - 2));
+  datas.forEach((d, i) => {
+    const v = valores[i];
+    const y = Y(v), base = H - M.b;
+    const h = Math.max(base - y, 0);
+    if (h > 0.5) {
+      const raio = Math.min(4, larg / 2, h);
+      // topo arredondado, base reta (cresce da linha de base)
+      el("path", { d: `M ${X(d) - larg / 2} ${base}
+        L ${X(d) - larg / 2} ${y + raio} Q ${X(d) - larg / 2} ${y} ${X(d) - larg / 2 + raio} ${y}
+        L ${X(d) + larg / 2 - raio} ${y} Q ${X(d) + larg / 2} ${y} ${X(d) + larg / 2} ${y + raio}
+        L ${X(d) + larg / 2} ${base} Z`.replace(/\s+/g, " "), fill: cor }, svg);
+    }
+    const hitW = Math.max(larg + 4, 24);
+    const hit = el("rect", { x: X(d) - hitW / 2, y: M.t, width: hitW, height: H - M.t - M.b, fill: "transparent" }, svg);
+    hit.addEventListener("pointermove", ev =>
+      mostrarTooltip(ev.clientX, ev.clientY, d, [{ nome: "Chuva", cor: getComputedStyle(document.documentElement).getPropertyValue("--chuva"), valor: fmt1.format(v) + " " + unidade }]));
+    hit.addEventListener("pointerleave", esconderTooltip);
+  });
+}
+
+/* ---------- render geral ---------- */
+function render() {
+  if (!DADOS) return;
+
+  /* tiles */
+  const tiles = document.getElementById("tiles");
+  tiles.textContent = "";
+  for (const s of SERIES) {
+    const r = DADOS.resumo?.[s.id];
+    if (!r) continue;
+    const t = document.createElement("div"); t.className = "tile";
+    const lb = document.createElement("div"); lb.className = "label";
+    const sw = document.createElement("span"); sw.className = "swatch"; sw.style.background = s.cor;
+    lb.append(sw, document.createTextNode(`${s.nome} · saca 60 kg`));
+    const val = document.createElement("div"); val.className = "value"; val.textContent = "R$ " + fmtBR.format(r.ultimo);
+    const meta = document.createElement("div"); meta.className = "meta";
+    meta.textContent = "fechamento " + new Date(r.data + "T12:00:00").toLocaleDateString("pt-BR");
+    t.append(lb, val, meta);
+    if (r.var_30d_pct !== null && r.var_30d_pct !== undefined) {
+      const dl = document.createElement("div");
+      dl.className = "delta " + (r.var_30d_pct >= 0 ? "up" : "down");
+      dl.textContent = (r.var_30d_pct >= 0 ? "▲ +" : "▼ ") + fmt1.format(r.var_30d_pct) + "% em 30 dias";
+      t.appendChild(dl);
+    }
+    tiles.appendChild(t);
+  }
+
+  /* legenda preços */
+  const lg = document.getElementById("legendPrecos");
+  lg.textContent = "";
+  for (const s of SERIES) {
+    if (!DADOS.precos?.[s.id]) continue;
+    const item = document.createElement("span");
+    const key = document.createElement("span"); key.className = "key"; key.style.borderTopColor = s.cor;
+    item.append(key, document.createTextNode(s.nome));
+    lg.appendChild(item);
+  }
+
+  /* gráfico preços */
+  const series = SERIES.filter(s => DADOS.precos?.[s.id]).map(s => {
+    const [datas, valores] = filtrar(DADOS.precos[s.id].datas, DADOS.precos[s.id].valores);
+    return { nome: s.nome, cor: s.cor, corVar: `--${s.id}`, datas, valores };
+  }).filter(s => s.datas.length);
+  desenharLinhas(document.getElementById("chartPrecos"), series);
+
+  /* clima */
+  if (DADOS.clima?.datas?.length) {
+    const [cd, chuva, temp] = filtrar(DADOS.clima.datas, DADOS.clima.chuva_mm, DADOS.clima.temp_max);
+    desenharBarras(document.getElementById("chartChuva"), cd, chuva, "var(--chuva)", "mm");
+    desenharLinhas(document.getElementById("chartTemp"),
+      [{ nome: "Temp. máx", cor: "var(--temp)", corVar: "--temp", datas: cd, valores: temp }], 190);
+  }
+
+  /* correlações */
+  const corr = DADOS.correlacoes || {};
+  const ids = Object.keys(corr);
+  const cardCorr = document.getElementById("cardCorr");
+  if (ids.length) {
+    cardCorr.hidden = false;
+    const box = document.getElementById("corr");
+    box.textContent = "";
+    for (const id of ids) {
+      const s = SERIES.find(x => x.id === id);
+      const c = corr[id];
+      const span = document.createElement("span");
+      const b1 = document.createElement("b"); b1.textContent = c.chuva_30d ?? "–";
+      const b2 = document.createElement("b"); b2.textContent = c.temp_30d ?? "–";
+      span.append(document.createTextNode(`${s ? s.nome : id}: r(chuva 30d) = `), b1,
+                  document.createTextNode(" · r(temp 30d) = "), b2,
+                  document.createTextNode(` · n=${c.n}`));
+      box.appendChild(span);
+    }
+  } else cardCorr.hidden = true;
+
+  /* tabela (vista acessível) */
+  const tab = document.getElementById("tabela");
+  tab.textContent = "";
+  const thead = document.createElement("tr");
+  for (const h of ["Data", "Milho (R$)", "Soja (R$)", "Trigo (R$)", "Chuva (mm)", "Temp. máx (°C)"]) {
+    const th = document.createElement("th"); th.textContent = h; thead.appendChild(th);
+  }
+  tab.appendChild(thead);
+  const porData = new Map();
+  for (const s of SERIES) {
+    const p = DADOS.precos?.[s.id]; if (!p) continue;
+    p.datas.forEach((d, i) => {
+      if (!porData.has(d)) porData.set(d, {});
+      porData.get(d)[s.id] = p.valores[i];
+    });
+  }
+  (DADOS.clima?.datas || []).forEach((d, i) => {
+    if (!porData.has(d)) porData.set(d, {});
+    const o = porData.get(d);
+    o.chuva = DADOS.clima.chuva_mm[i]; o.temp = DADOS.clima.temp_max[i];
+  });
+  const min = dataMin();
+  const datasOrd = [...porData.keys()].filter(d => !min || d >= min).sort().reverse();
+  for (const d of datasOrd) {
+    const o = porData.get(d);
+    const tr = document.createElement("tr");
+    const c0 = document.createElement("td"); c0.textContent = new Date(d + "T12:00:00").toLocaleDateString("pt-BR"); tr.appendChild(c0);
+    for (const v of [o.milho, o.soja, o.trigo, o.chuva, o.temp]) {
+      const td = document.createElement("td");
+      td.textContent = (v === undefined || v === null) ? "–" : fmt1.format(v);
+      tr.appendChild(td);
+    }
+    tab.appendChild(tr);
+  }
+}
+
+/* filtros de período */
+document.getElementById("filtros").addEventListener("click", ev => {
+  const btn = ev.target.closest("button"); if (!btn) return;
+  diasFiltro = +btn.dataset.dias;
+  for (const b of document.querySelectorAll("#filtros button")) b.setAttribute("aria-pressed", b === btn);
+  render();
+});
+window.addEventListener("resize", () => { clearTimeout(window.__rz); window.__rz = setTimeout(render, 150); });
+
+fetch("dados.json")
+  .then(r => { if (!r.ok) throw new Error("dados.json não encontrado"); return r.json(); })
+  .then(d => {
+    DADOS = d;
+    const dt = new Date(d.atualizado_em);
+    document.getElementById("updated").textContent =
+      "Última atualização do pipeline: " + dt.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+    render();
+  })
+  .catch(e => {
+    document.getElementById("updated").textContent = "Erro ao carregar dados: " + e.message;
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+# Coleta diária sem nenhuma credencial de nuvem: os próprios CSVs versionados
+# no repositório são o banco de dados ("git scraping").
+#
+# Diferenças deliberadas em relação à v1 (monitor-clima-pf):
+# - Se a coleta falhar, o job FALHA (fica vermelho e o GitHub manda e-mail).
+#   Na v1 os erros eram engolidos por try/except e o Actions ficava verde
+#   enquanto o pipeline estava morto há meses.
+# - Não há secret de service account: nada de BigQuery para escrever.
+# - As páginas trazem ~10 dias de fechamentos, então dias perdidos são
+#   recuperados na execução seguinte automaticamente.
+
+name: Coleta diária
+
+on:
+  schedule:
+    - cron: '0 21 * * 1-5'   # 18h Brasília, dias úteis (após o fechamento)
+  workflow_dispatch:          # permite rodar manualmente pela aba Actions
+
+permissions:
+  contents: write
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Coletar preços e clima
+        run: python src/coletar.py
+
+      - name: Transformar (DuckDB) e gerar dados do dashboard
+        run: python src/transformar.py
+
+      - name: Commit dos dados atualizados
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data/ docs/dados.json
+          git diff --cached --quiet && echo 'Nada novo para commitar.' && exit 0
+          git commit -m "dados: coleta $(date -u +%Y-%m-%d)"
+          git push

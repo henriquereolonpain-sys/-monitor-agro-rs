@@ -82,6 +82,20 @@
   }
   .card h2 { font-size: .95rem; font-weight: 600; }
   .card .desc { font-size: .78rem; color: var(--text-muted); margin-bottom: 8px; }
+  .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .modos { display: flex; gap: 6px; }
+  .modos button {
+    font: inherit; font-size: .75rem; padding: 4px 11px; cursor: pointer;
+    background: transparent; color: var(--text-muted);
+    border: 1px solid var(--border); border-radius: 999px;
+  }
+  .modos button[aria-pressed="true"] {
+    color: var(--text-primary); font-weight: 600; border-color: var(--text-muted);
+    background: var(--page);
+  }
+  .mini-titulo { display: flex; align-items: center; gap: 7px; font-size: .8rem;
+    font-weight: 600; color: var(--text-secondary); margin: 14px 0 2px; }
+  .mini-titulo .swatch { width: 10px; height: 10px; border-radius: 3px; }
   .legend { display: flex; gap: 16px; font-size: .78rem; color: var(--text-secondary); margin: 6px 0 2px; flex-wrap: wrap; }
   .legend .key { display: inline-block; width: 14px; height: 0; border-top: 2px solid; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
   svg { display: block; width: 100%; height: auto; }
@@ -129,8 +143,16 @@
   <section class="tiles" id="tiles"></section>
 
   <section class="card">
-    <h2>Preço da saca de 60&nbsp;kg (R$)</h2>
-    <div class="desc">Fechamentos do mercado físico · Notícias Agrícolas</div>
+    <div class="card-head">
+      <div>
+        <h2 id="tituloPrecos">Variação no período (base 100)</h2>
+        <div class="desc">Fechamentos do mercado físico · Notícias Agrícolas</div>
+      </div>
+      <div class="modos" id="modosPrecos" aria-label="Modo de exibição">
+        <button data-modo="indice" aria-pressed="true">Variação · base 100</button>
+        <button data-modo="reais" aria-pressed="false">Preço · R$</button>
+      </div>
+    </div>
     <div class="legend" id="legendPrecos"></div>
     <div id="chartPrecos"></div>
   </section>
@@ -179,6 +201,7 @@ const fmtBR = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2, maximum
 const fmt1 = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
 let DADOS = null;
 let diasFiltro = 90;
+let modoPrecos = "indice";
 
 function el(tag, attrs, parent) {
   const n = document.createElementNS(NS, tag);
@@ -240,14 +263,20 @@ function mostrarTooltip(x, y, dataIso, linhas) {
 }
 function esconderTooltip() { tt.style.display = "none"; }
 
-/* ---------- gráfico de linhas (preços) ---------- */
-function desenharLinhas(container, series, altura = 300) {
+/* ---------- gráfico de linhas ----------
+   opts: fmtVal(serie, i) → texto do tooltip · endLabel(serie) → rótulo direto
+         fmtTick(v) → texto do eixo · refY → linha de referência (ex.: base 100) */
+function desenharLinhas(container, series, altura = 300, opts = {}) {
   container.textContent = "";
   const W = Math.max(container.clientWidth || 640, 320), H = altura;
-  const M = { t: 14, r: 74, b: 26, l: 46 };
+  const M = { t: 14, r: 84, b: 26, l: 46 };
   const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
-    "aria-label": "Série de preços por commodity" });
+    "aria-label": opts.aria || "Série temporal" });
   container.appendChild(svg);
+
+  const fmtVal = opts.fmtVal || ((s, i) => "R$ " + fmtBR.format(s.valores[i]));
+  const endLabel = opts.endLabel || (s => `${s.nome} ${fmt1.format(s.valores[s.valores.length - 1])}`);
+  const fmtTick = opts.fmtTick || (v => fmt1.format(v));
 
   const todasDatas = [...new Set(series.flatMap(s => s.datas))].sort();
   if (!todasDatas.length) return;
@@ -260,8 +289,11 @@ function desenharLinhas(container, series, altura = 300) {
   for (const tv of ticksLimpos(vmin - folga, vmax + folga)) {
     el("line", { x1: M.l, x2: W - M.r, y1: Y(tv), y2: Y(tv), stroke: "var(--grid)", "stroke-width": 1 }, svg);
     el("text", { x: M.l - 8, y: Y(tv) + 4, "text-anchor": "end", "font-size": 11, fill: "var(--text-muted)" }, svg)
-      .textContent = fmt1.format(tv);
+      .textContent = fmtTick(tv);
   }
+  if (opts.refY !== undefined && opts.refY >= vmin - folga && opts.refY <= vmax + folga)
+    el("line", { x1: M.l, x2: W - M.r, y1: Y(opts.refY), y2: Y(opts.refY),
+      stroke: "var(--baseline)", "stroke-width": 1 }, svg);
   const nx = Math.min(6, todasDatas.length);
   for (let i = 0; i < nx; i++) {
     const d = todasDatas[Math.round(i * (todasDatas.length - 1) / Math.max(nx - 1, 1))];
@@ -278,7 +310,7 @@ function desenharLinhas(container, series, altura = 300) {
       "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
     const ux = X(s.datas[s.datas.length - 1]), uy = Y(s.valores[s.valores.length - 1]);
     el("circle", { cx: ux, cy: uy, r: 4, fill: s.cor, stroke: "var(--surface-1)", "stroke-width": 2 }, svg);
-    rotulos.push({ ux, uy, texto: `${s.nome} ${fmt1.format(s.valores[s.valores.length - 1])}` });
+    rotulos.push({ ux, uy, texto: endLabel(s) });
   }
 
   // rótulos diretos no fim das linhas (regra de alívio p/ contraste do amarelo);
@@ -311,7 +343,7 @@ function desenharLinhas(container, series, altura = 300) {
     cross.setAttribute("visibility", "visible");
     const linhas = series.map(s => {
       const i = s.datas.indexOf(melhor);
-      return i >= 0 ? { nome: s.nome, cor: getComputedStyle(document.documentElement).getPropertyValue(s.corVar) || s.cor, valor: "R$ " + fmtBR.format(s.valores[i]) } : null;
+      return i >= 0 ? { nome: s.nome, cor: getComputedStyle(document.documentElement).getPropertyValue(s.corVar) || s.cor, valor: fmtVal(s, i) } : null;
     }).filter(Boolean);
     if (linhas.length) mostrarTooltip(ev.clientX, ev.clientY, melhor, linhas);
   });
@@ -391,23 +423,55 @@ function render() {
     tiles.appendChild(t);
   }
 
-  /* legenda preços */
-  const lg = document.getElementById("legendPrecos");
-  lg.textContent = "";
-  for (const s of SERIES) {
-    if (!DADOS.precos?.[s.id]) continue;
-    const item = document.createElement("span");
-    const key = document.createElement("span"); key.className = "key"; key.style.borderTopColor = s.cor;
-    item.append(key, document.createTextNode(s.nome));
-    lg.appendChild(item);
-  }
-
-  /* gráfico preços */
+  /* gráfico preços — dois modos, nunca eixo duplo:
+     "indice": tudo em base 100 no início do período (variações comparáveis)
+     "reais":  small multiples, um mini-gráfico por commodity com escala própria */
   const series = SERIES.filter(s => DADOS.precos?.[s.id]).map(s => {
     const [datas, valores] = filtrar(DADOS.precos[s.id].datas, DADOS.precos[s.id].valores);
     return { nome: s.nome, cor: s.cor, corVar: `--${s.id}`, datas, valores };
   }).filter(s => s.datas.length);
-  desenharLinhas(document.getElementById("chartPrecos"), series);
+
+  const lg = document.getElementById("legendPrecos");
+  const boxPrecos = document.getElementById("chartPrecos");
+  const titulo = document.getElementById("tituloPrecos");
+  lg.textContent = ""; boxPrecos.textContent = "";
+
+  const pctStr = v => (v >= 0 ? "+" : "") + fmt1.format(v) + "%";
+
+  if (modoPrecos === "indice") {
+    titulo.textContent = "Variação no período (base 100)";
+    for (const s of series) {
+      const item = document.createElement("span");
+      const key = document.createElement("span"); key.className = "key"; key.style.borderTopColor = s.cor;
+      item.append(key, document.createTextNode(s.nome));
+      lg.appendChild(item);
+    }
+    const indexadas = series.map(s => ({
+      ...s,
+      brutos: s.valores,
+      valores: s.valores.map(v => v / s.valores[0] * 100),
+    }));
+    desenharLinhas(boxPrecos, indexadas, 280, {
+      aria: "Variação percentual dos preços, base 100 no início do período",
+      refY: 100,
+      fmtVal: (s, i) => `R$ ${fmtBR.format(s.brutos[i])} · ${pctStr(s.valores[i] - 100)}`,
+      endLabel: s => `${s.nome} ${pctStr(s.valores[s.valores.length - 1] - 100)}`,
+    });
+  } else {
+    titulo.textContent = "Preço da saca de 60 kg (R$)";
+    for (const s of series) {
+      const t = document.createElement("div"); t.className = "mini-titulo";
+      const sw = document.createElement("span"); sw.className = "swatch"; sw.style.background = s.cor;
+      t.append(sw, document.createTextNode(s.nome));
+      boxPrecos.appendChild(t);
+      const box = document.createElement("div");
+      boxPrecos.appendChild(box);
+      desenharLinhas(box, [s], 150, {
+        aria: `Preço da saca de ${s.nome} em reais`,
+        endLabel: x => "R$ " + fmtBR.format(x.valores[x.valores.length - 1]),
+      });
+    }
+  }
 
   /* clima */
   if (DADOS.clima?.datas?.length) {
@@ -479,6 +543,14 @@ document.getElementById("filtros").addEventListener("click", ev => {
   const btn = ev.target.closest("button"); if (!btn) return;
   diasFiltro = +btn.dataset.dias;
   for (const b of document.querySelectorAll("#filtros button")) b.setAttribute("aria-pressed", b === btn);
+  render();
+});
+
+/* modo do gráfico de preços */
+document.getElementById("modosPrecos").addEventListener("click", ev => {
+  const btn = ev.target.closest("button"); if (!btn) return;
+  modoPrecos = btn.dataset.modo;
+  for (const b of document.querySelectorAll("#modosPrecos button")) b.setAttribute("aria-pressed", b === btn);
   render();
 });
 window.addEventListener("resize", () => { clearTimeout(window.__rz); window.__rz = setTimeout(render, 150); });

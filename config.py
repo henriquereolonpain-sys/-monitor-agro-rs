@@ -22,7 +22,20 @@ CLIMA_DATA_INICIAL = "2025-01-01"
 # A archive API da Open-Meteo tem defasagem de alguns dias para dados observados
 CLIMA_DEFASAGEM_DIAS = 3
 
+# Detector de estagnação: se a cotação mais recente de uma fonte for mais velha
+# que isso, a fonte é tratada como morta e o coletor passa ao fallback.
+# Motivado pelo congelamento real do CMA (16/02 a ~06/06/2026): a página seguia
+# no ar servindo as tabelas antigas, então "página responde" não prova fonte viva.
+LIMIAR_FRESCOR_DIAS = 7
+
+# Site da Cotrijal (fallback independente do domínio Notícias Agrícolas).
+# A homepage embute `window.responseCotacoes = {...}` com as cotações do dia;
+# em fins de semana/feriados vem {"dados": [], "mensagem": "Mercado Fechado"}.
+URL_COTRIJAL = "https://www.cotrijal.com.br/"
+
 COMMODITIES = {
+    # Cada fonte tem um "tipo" de parser: "na" (páginas do Notícias Agrícolas,
+    # padrão) ou "cotrijal" (JSON embutido na homepage da cooperativa).
     "milho": {
         "unidade": "R$/saca 60kg",
         # Faixa de sanidade: preço fora disso é descartado (protege contra
@@ -38,6 +51,11 @@ COMMODITIES = {
                 "nome": "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
                 "url": f"{BASE_NA}/milho/milho-mercado-fisico-sindicatos-e-cooperativas",
                 "praca_regex": r"N[ãa]o[- ]?Me[- ]?Toque",
+            },
+            {
+                "nome": "Cotrijal · Não-Me-Toque/RS (site oficial)",
+                "tipo": "cotrijal",
+                "produto_regex": r"milho",
             },
         ],
     },
@@ -55,6 +73,11 @@ COMMODITIES = {
                 "url": f"{BASE_NA}/soja/soja-mercado-fisico-sindicatos-e-cooperativas",
                 "praca_regex": r"Nonoai",
             },
+            {
+                "nome": "Cotrijal · Não-Me-Toque/RS (site oficial)",
+                "tipo": "cotrijal",
+                "produto_regex": r"soja",
+            },
         ],
     },
     "trigo": {
@@ -70,6 +93,11 @@ COMMODITIES = {
                 "nome": "NA · Trigo Mercado Físico · Nonoai/RS",
                 "url": f"{BASE_NA}/trigo/trigo-mercado-fisico",
                 "praca_regex": r"Nonoai",
+            },
+            {
+                "nome": "Cotrijal · Não-Me-Toque/RS (site oficial)",
+                "tipo": "cotrijal",
+                "produto_regex": r"trigo",
             },
         ],
     },

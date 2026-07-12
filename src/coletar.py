@@ -11,6 +11,7 @@ Desenho pensado para não repetir os erros da v1 (monitor-clima-pf):
   o script termina com exit code 1 e o GitHub Actions fica vermelho.
 """
 
+import json
 import re
 import sys
 from datetime import date, datetime, timedelta
@@ -28,7 +29,9 @@ from config import (
     FUSO,
     HEADERS,
     LATITUDE,
+    LIMIAR_FRESCOR_DIAS,
     LONGITUDE,
+    URL_COTRIJAL,
 )
 
 RAIZ = Path(__file__).resolve().parents[1]
@@ -86,21 +89,77 @@ def extrair_cotacoes(html: str, praca_regex: str) -> list[tuple[date, float]]:
     return cotacoes
 
 
+def extrair_cotacoes_cotrijal(html: str, produto_regex: str) -> list[tuple[date, float]]:
+    """Extrai a cotação do dia do JSON embutido na homepage da Cotrijal.
+
+    Formato observado: `window.responseCotacoes = {"data_atual":"dd/mm/aaaa",
+    "dados":[...], "mensagem":...}`. Em fim de semana/feriado `dados` vem vazio
+    ("Mercado Fechado"). O schema dos itens não é documentado, então o parser é
+    defensivo: acha o item cujo texto casa com o produto e pega o primeiro
+    número plausível dele.
+    """
+    m = re.search(r"window\.responseCotacoes\s*=\s*(\{.*?\})\s*;", html, re.DOTALL)
+    if not m:
+        raise ValueError("JSON responseCotacoes não encontrado na página da Cotrijal")
+    payload = json.loads(m.group(1))
+
+    dados = payload.get("dados") or []
+    if not dados:
+        print(f"    (Cotrijal sem pregão: {payload.get('mensagem', 'dados vazios')})")
+        return []
+
+    m_data = re.search(r"(\d{2})/(\d{2})/(\d{4})", str(payload.get("data_atual", "")))
+    data_cot = (date(int(m_data.group(3)), int(m_data.group(2)), int(m_data.group(1)))
+                if m_data else date.today())
+
+    padrao = re.compile(produto_regex, re.IGNORECASE)
+    for item in dados:
+        texto = json.dumps(item, ensure_ascii=False)
+        if not padrao.search(texto):
+            continue
+        # 1º: campo com nome de preço; 2º: número com casa decimal no texto
+        # (evita capturar "60" de "saca 60kg" como se fosse preço)
+        candidatos = []
+        if isinstance(item, dict):
+            for chave, valor in item.items():
+                if re.search(r"pre[çc]o|valor|price|cota", chave, re.IGNORECASE):
+                    candidatos.append(str(valor))
+        candidatos += re.findall(r"\d+[.,]\d{1,2}", texto)
+        for bruto in candidatos:
+            try:
+                preco = parsear_numero(bruto)
+            except ValueError:
+                continue
+            if preco > 1:  # descarta índices/percentuais pequenos
+                return [(data_cot, preco)]
+    return []
+
+
 def coletar_precos() -> tuple[pd.DataFrame, list[str]]:
-    """Percorre commodities e fontes; devolve (novos_registros, falhas)."""
+    """Percorre commodities e fontes; devolve (novos_registros, falhas).
+
+    Uma fonte só é considerada viva se a cotação mais recente dela tiver menos
+    de LIMIAR_FRESCOR_DIAS. Página no ar servindo tabelas velhas (como o CMA
+    congelado de fev–jun/2026) conta como fonte morta e cai para o fallback.
+    """
     registros = []
     falhas = []
     cache_html: dict[str, str] = {}  # evita baixar a mesma URL duas vezes
+    limite_frescor = date.today() - timedelta(days=LIMIAR_FRESCOR_DIAS)
 
     for commodity, cfg in COMMODITIES.items():
         minimo, maximo = cfg["faixa_plausivel"]
         obtido = False
 
         for fonte in cfg["fontes"]:
+            url = fonte.get("url", URL_COTRIJAL)
             try:
-                if fonte["url"] not in cache_html:
-                    cache_html[fonte["url"]] = baixar_html(fonte["url"])
-                cotacoes = extrair_cotacoes(cache_html[fonte["url"]], fonte["praca_regex"])
+                if url not in cache_html:
+                    cache_html[url] = baixar_html(url)
+                if fonte.get("tipo") == "cotrijal":
+                    cotacoes = extrair_cotacoes_cotrijal(cache_html[url], fonte["produto_regex"])
+                else:
+                    cotacoes = extrair_cotacoes(cache_html[url], fonte["praca_regex"])
             except Exception as e:
                 print(f"[{commodity}] fonte '{fonte['nome']}' falhou: {e}")
                 continue
@@ -110,19 +169,30 @@ def coletar_precos() -> tuple[pd.DataFrame, list[str]]:
             if descartadas:
                 print(f"[{commodity}] {descartadas} cotações fora da faixa plausível descartadas")
 
-            if validas:
-                for d, p in validas:
-                    registros.append({
-                        "data": d.isoformat(),
-                        "commodity": commodity,
-                        "preco": p,
-                        "fonte": fonte["nome"],
-                        "coletado_em": datetime.now().isoformat(timespec="seconds"),
-                    })
-                print(f"[{commodity}] {len(validas)} fechamentos via '{fonte['nome']}' "
-                      f"(último: {validas[0][0]} = R$ {validas[0][1]:.2f})")
-                obtido = True
-                break  # fonte primária funcionou; não precisa do fallback
+            if not validas:
+                continue
+
+            # grava mesmo se estagnada (dado real; dedup neutraliza), mas só
+            # uma fonte fresca encerra a busca — senão o alerta dispara
+            for d, p in validas:
+                registros.append({
+                    "data": d.isoformat(),
+                    "commodity": commodity,
+                    "preco": p,
+                    "fonte": fonte["nome"],
+                    "coletado_em": datetime.now().isoformat(timespec="seconds"),
+                })
+
+            mais_nova = max(d for d, _ in validas)
+            if mais_nova < limite_frescor:
+                print(f"[{commodity}] fonte '{fonte['nome']}' ESTAGNADA: cotação mais "
+                      f"recente é de {mais_nova} (limite: {limite_frescor}); tentando fallback")
+                continue
+
+            print(f"[{commodity}] {len(validas)} fechamentos via '{fonte['nome']}' "
+                  f"(último: {mais_nova} = R$ {dict(validas)[mais_nova]:.2f})")
+            obtido = True
+            break
 
         if not obtido:
             falhas.append(commodity)
@@ -204,7 +274,8 @@ def main() -> int:
     # foi salvo acima; o exit 1 serve para o Actions ficar vermelho e avisar.
     if falhas or erro_clima:
         if falhas:
-            print(f"\nERRO: nenhuma fonte funcionou para: {', '.join(falhas)}")
+            print(f"\nERRO: nenhuma fonte fresca (<{LIMIAR_FRESCOR_DIAS} dias) "
+                  f"para: {', '.join(falhas)}")
         return 1
 
     print("\nColeta concluída sem falhas.")

@@ -29,6 +29,7 @@ Cada decisão da v2 responde a um desses erros:
 | Previsão misturada com observação | Só **Open-Meteo Archive (ERA5)** — dado observado, com defasagem respeitada |
 | Data da cotação = data do run (errado em fins de semana) | Data extraída do **"Fechamento: dd/mm/aaaa"** da própria página |
 | Preço com layout mudado gravava lixo | **Faixa de plausibilidade** por commodity descarta valores absurdos |
+| Fonte congelada passava despercebida (CMA ficou ~4 meses sem atualizar em 2026 e a página seguia no ar) | **Detector de estagnação**: cotação mais nova com >7 dias = fonte morta → fallback; todas mortas → alerta |
 | BigQuery + service account + Looker para 3 séries | **CSV versionado no git + DuckDB + dashboard estático** — zero credencial, zero custo |
 
 ## Arquitetura
@@ -51,12 +52,17 @@ histórico auditável — cada commit diário documenta o estado da fonte naquel
 
 ## Fontes
 
-| Série | Fonte primária | Fallback |
+| Série | Fonte primária | Fallbacks (em ordem) |
 |---|---|---|
-| Milho | Notícias Agrícolas · Milho CMA · praça Passo Fundo/RS | NA · Sindicatos e Cooperativas · Não-Me-Toque/RS |
-| Soja | NA · Sindicatos e Cooperativas · Não-Me-Toque/RS (Cotrijal) | mesma página · praça Nonoai/RS |
-| Trigo | NA · Trigo Mercado Físico · Não-Me-Toque/RS (Cotrijal) | mesma página · praça Nonoai/RS |
+| Milho | Notícias Agrícolas · Milho CMA · praça Passo Fundo/RS | NA · Sindicatos/Cooperativas · Não-Me-Toque/RS → site da Cotrijal |
+| Soja | NA · Sindicatos e Cooperativas · Não-Me-Toque/RS (Cotrijal) | mesma página · Nonoai/RS → site da Cotrijal |
+| Trigo | NA · Trigo Mercado Físico · Não-Me-Toque/RS (Cotrijal) | mesma página · Nonoai/RS → site da Cotrijal |
 | Clima | Open-Meteo Archive API (ERA5) · lat/lon de Passo Fundo | — |
+
+O último fallback é o **site oficial da Cotrijal** (cotrijal.com.br), que embute as cotações
+do dia num JSON server-side — independência total do domínio Notícias Agrícolas. Limitações:
+só o dia corrente (sem backfill) e vazio em dias sem pregão ("Mercado Fechado"), por isso é
+o último da fila e não a primária.
 
 A coluna `fonte` em `data/raw/precos.csv` registra qual fonte forneceu cada linha, então
 trocas de fonte ficam documentadas na própria série.

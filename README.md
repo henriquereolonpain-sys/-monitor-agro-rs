@@ -71,6 +71,36 @@ o último da fila e não a primária.
 A coluna `fonte` em `data/raw/precos.csv` registra qual fonte forneceu cada linha, então
 trocas de fonte ficam documentadas na própria série.
 
+## Previsão de preço (clima → preço)
+
+O objetivo final do projeto, herdado da v1: estimar o preço da saca nos próximos dias
+dado o que se sabe — e o que se prevê — de chuva e temperatura. `src/prever.py` implementa
+a primeira versão, desenhada para ser **honesta antes de ser impressionante**:
+
+- **Alvo é a variação diária (Δpreço), não o nível.** Preço de balcão é série administrada
+  (fica dias parada); prever nível deixaria o modelo aprender a identidade e parecer bom
+  sem ser. A regularização do ridge puxa os coeficientes para zero = "preço não muda",
+  que é o baseline correto.
+- **Treina com observado, projeta com previsto.** Features climáticas usam o ERA5 dos CSVs;
+  na projeção (10 dias úteis) entram os 16 dias de *forecast* da Open-Meteo — que nunca
+  são gravados nos CSVs, mantendo o princípio da v2 de não misturar observação e previsão.
+- **Emenda de nível no bloco de fallback do milho.** O degrau de ~R$9 CMA→Cotrijal
+  (documentado em [`analises/comparacao_cma_cotrijal.md`](analises/comparacao_cma_cotrijal.md))
+  não é movimento de mercado; o spread é estimado nas bordas do próprio bloco e somado
+  de volta antes do treino.
+- **Hiperparâmetro escolhido sem contaminar o teste.** λ do ridge é selecionado por
+  commodity numa janela de validação que termina onde a janela de backtest começa — e o
+  baseline ingênuo (λ→∞) concorre como candidato: sem sinal, o modelo assume "não sei"
+  em vez de inventar tendência.
+- **Backtest walk-forward publicado no dashboard**, MAE do modelo lado a lado com o de
+  não prever nada. Estado atual (h=10 dias úteis): **trigo bate o baseline** (1,57 vs
+  1,70 — coerente com r=−0,39 entre temperatura 30d e preço), soja empata por escolha
+  própria do seletor, milho ainda não (a validação caiu no regime do congelamento do CMA).
+
+A saída vai para `docs/previsao.json` e vira o gráfico de projeção do dashboard: linha
+tracejada com banda de incerteza ≈80% (±1,28σ√h) e um selo de backtest por série
+("✓ modelo ganha" / "sem vantagem ainda") — o leitor decide quanto confiar.
+
 ## Rodando localmente
 
 ```bash
@@ -78,6 +108,7 @@ pip install -r requirements.txt
 python src/coletar.py      # coleta preços + clima → data/raw/
 python src/backfill.py     # opcional: preenche histórico via páginas datadas do NA
 python src/transformar.py  # DuckDB → data/processed/ + docs/dados.json
+python src/prever.py       # modelo clima→preço → docs/previsao.json
 python -m http.server 8000 --directory docs   # dashboard em http://localhost:8000
 ```
 

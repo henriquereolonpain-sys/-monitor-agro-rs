@@ -14,6 +14,8 @@ import duckdb
 import pandas as pd
 
 RAIZ = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(RAIZ))
+from config import COMMODITIES as CFG_COMMODITIES, URL_COTRIJAL
 ARQ_PRECOS = RAIZ / "data" / "raw" / "precos.csv"
 ARQ_CLIMA = RAIZ / "data" / "raw" / "clima.csv"
 ARQ_SERIE = RAIZ / "data" / "processed" / "serie_completa.csv"
@@ -31,7 +33,7 @@ def main() -> int:
 
     con.execute(f"""
         CREATE VIEW precos AS
-        SELECT CAST(data AS DATE) AS data, commodity, CAST(preco AS DOUBLE) AS preco
+        SELECT CAST(data AS DATE) AS data, commodity, CAST(preco AS DOUBLE) AS preco, fonte
         FROM read_csv_auto('{ARQ_PRECOS.as_posix()}');
 
         CREATE VIEW clima AS
@@ -67,17 +69,24 @@ def main() -> int:
         "clima": {},
         "resumo": {},
         "correlacoes": {},
+        # nome da fonte -> URL base; o dashboard monta o link datado
+        # (url + /AAAA-MM-DD) para provar a origem de cada ponto do gráfico
+        "fontes_urls": {
+            f["nome"]: f.get("url", URL_COTRIJAL)
+            for cfg in CFG_COMMODITIES.values() for f in cfg["fontes"]
+        },
     }
 
     for c in COMMODITIES:
         df = con.execute(
-            "SELECT data, preco FROM precos WHERE commodity = ? ORDER BY data", [c]
+            "SELECT data, preco, fonte FROM precos WHERE commodity = ? ORDER BY data", [c]
         ).fetchdf()
         if df.empty:
             continue
         payload["precos"][c] = {
             "datas": df["data"].dt.strftime("%Y-%m-%d").tolist(),
             "valores": df["preco"].round(2).tolist(),
+            "fontes": df["fonte"].tolist(),
         }
         ultimo = df.iloc[-1]
         base_30d = df[df["data"] >= ultimo["data"] - pd.Timedelta(days=30)].iloc[0]

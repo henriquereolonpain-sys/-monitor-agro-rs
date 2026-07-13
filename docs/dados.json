@@ -1,5 +1,5 @@
 {
- "atualizado_em": "2026-07-12T16:19:38",
+ "atualizado_em": "2026-07-13T13:27:00",
  "precos": {
   "milho": {
    "datas": [
@@ -25,6 +25,18 @@
     68.5,
     68.5,
     68.5
+   ],
+   "fontes": [
+    "NA · Milho CMA · Passo Fundo/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
+    "NA · Milho CMA · Passo Fundo/RS"
    ]
   },
   "soja": {
@@ -51,6 +63,18 @@
     122.0,
     122.0,
     122.0
+   ],
+   "fontes": [
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS"
    ]
   },
   "trigo": {
@@ -77,6 +101,18 @@
     70.0,
     70.0,
     70.0
+   ],
+   "fontes": [
+    "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
+    "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
+    "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
+    "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
+    "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
+    "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
+    "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
+    "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
+    "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
+    "NA · Trigo Mercado Físico · Não-Me-Toque/RS"
    ]
   }
  },
@@ -1770,5 +1806,13 @@
    "var_30d_pct": 0.0
   }
  },
- "correlacoes": {}
+ "correlacoes": {},
+ "fontes_urls": {
+  "NA · Milho CMA · Passo Fundo/RS": "https://www.noticiasagricolas.com.br/cotacoes/milho/milho-cma",
+  "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS": "https://www.noticiasagricolas.com.br/cotacoes/soja/soja-mercado-fisico-sindicatos-e-cooperativas",
+  "Cotrijal · Não-Me-Toque/RS (site oficial)": "https://www.cotrijal.com.br/",
+  "NA · Sindicatos e Cooperativas · Nonoai/RS": "https://www.noticiasagricolas.com.br/cotacoes/soja/soja-mercado-fisico-sindicatos-e-cooperativas",
+  "NA · Trigo Mercado Físico · Não-Me-Toque/RS": "https://www.noticiasagricolas.com.br/cotacoes/trigo/trigo-mercado-fisico",
+  "NA · Trigo Mercado Físico · Nonoai/RS": "https://www.noticiasagricolas.com.br/cotacoes/trigo/trigo-mercado-fisico"
+ }
 }

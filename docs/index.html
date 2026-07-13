@@ -96,6 +96,20 @@
   .mini-titulo { display: flex; align-items: center; gap: 7px; font-size: .8rem;
     font-weight: 600; color: var(--text-secondary); margin: 14px 0 2px; }
   .mini-titulo .swatch { width: 10px; height: 10px; border-radius: 3px; }
+
+  #detalheDia { border-left: 3px solid var(--text-muted); border-radius: 0 10px 10px 0; }
+  #detalheDia .fechar { position: absolute; top: 10px; right: 12px; background: none;
+    border: none; font-size: 1.1rem; color: var(--text-muted); cursor: pointer; }
+  .det-linha { display: flex; align-items: baseline; gap: 8px; padding: 6px 0;
+    border-bottom: 1px solid var(--grid); font-size: .85rem; flex-wrap: wrap; }
+  .det-linha:last-of-type { border-bottom: none; }
+  .det-linha .swatch { width: 10px; height: 10px; border-radius: 3px; align-self: center; }
+  .det-linha .det-nome { font-weight: 600; min-width: 60px; }
+  .det-linha .det-valor { font-variant-numeric: tabular-nums; }
+  .det-linha .det-fonte { color: var(--text-muted); font-size: .75rem; }
+  .det-linha a, .det-acoes a { color: var(--text-secondary); font-size: .78rem; white-space: nowrap; }
+  .det-acoes { display: flex; gap: 18px; margin-top: 10px; flex-wrap: wrap; }
+  tr.destacada td { background: color-mix(in srgb, var(--text-muted) 14%, transparent); }
   .legend { display: flex; gap: 16px; font-size: .78rem; color: var(--text-secondary); margin: 6px 0 2px; flex-wrap: wrap; }
   .legend .key { display: inline-block; width: 14px; height: 0; border-top: 2px solid; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
   svg { display: block; width: 100%; height: auto; }
@@ -146,7 +160,7 @@
     <div class="card-head">
       <div>
         <h2 id="tituloPrecos">Variação no período (base 100)</h2>
-        <div class="desc">Fechamentos do mercado físico · Notícias Agrícolas</div>
+        <div class="desc">Fechamentos do mercado físico · Notícias Agrícolas · clique num ponto para ver o registro e a fonte</div>
       </div>
       <div class="modos" id="modosPrecos" aria-label="Modo de exibição">
         <button data-modo="indice" aria-pressed="true">Variação · base 100</button>
@@ -155,6 +169,14 @@
     </div>
     <div class="legend" id="legendPrecos"></div>
     <div id="chartPrecos"></div>
+  </section>
+
+  <section class="card" id="detalheDia" hidden>
+    <button class="fechar" id="fecharDetalhe" aria-label="Fechar">✕</button>
+    <h2 id="detTitulo"></h2>
+    <div class="desc">Registro do dia, direto da base de dados do pipeline</div>
+    <div id="detCorpo"></div>
+    <div class="det-acoes" id="detAcoes"></div>
   </section>
 
   <section class="card">
@@ -202,6 +224,8 @@ const fmt1 = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
 let DADOS = null;
 let diasFiltro = 90;
 let modoPrecos = "indice";
+let dataSelecionada = null;
+const REPO_URL = "https://github.com/henriquereolonpain-sys/monitor-agro-rs";
 
 function el(tag, attrs, parent) {
   const n = document.createElementNS(NS, tag);
@@ -263,6 +287,99 @@ function mostrarTooltip(x, y, dataIso, linhas) {
 }
 function esconderTooltip() { tt.style.display = "none"; }
 
+/* ---------- painel de detalhe: o ponto clicado vira registro da base ---------- */
+function selecionarData(iso) {
+  const primeiraVez = document.getElementById("detalheDia").hidden;
+  dataSelecionada = iso;
+  render();
+  preencherDetalhe(iso);
+  if (primeiraVez)
+    document.getElementById("detalheDia").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function preencherDetalhe(iso) {
+  const painel = document.getElementById("detalheDia");
+  painel.hidden = false;
+  document.getElementById("detTitulo").textContent =
+    new Date(iso + "T12:00:00").toLocaleDateString("pt-BR",
+      { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
+
+  const corpo = document.getElementById("detCorpo");
+  corpo.textContent = "";
+  let temAlgo = false;
+
+  for (const s of SERIES) {
+    const p = DADOS.precos?.[s.id];
+    const i = p ? p.datas.indexOf(iso) : -1;
+    if (i < 0) continue;
+    temAlgo = true;
+    const linha = document.createElement("div"); linha.className = "det-linha";
+    const sw = document.createElement("span"); sw.className = "swatch"; sw.style.background = s.cor;
+    const nome = document.createElement("span"); nome.className = "det-nome"; nome.textContent = s.nome;
+    const valor = document.createElement("span"); valor.className = "det-valor";
+    valor.textContent = "R$ " + fmtBR.format(p.valores[i]);
+    linha.append(sw, nome, valor);
+    const fonte = p.fontes?.[i];
+    if (fonte) {
+      const f = document.createElement("span"); f.className = "det-fonte"; f.textContent = fonte;
+      linha.appendChild(f);
+      const urlBase = DADOS.fontes_urls?.[fonte];
+      if (urlBase) {
+        const a = document.createElement("a");
+        // páginas do NA aceitam /AAAA-MM-DD para a cotação exata do dia
+        a.href = urlBase.includes("noticiasagricolas") ? `${urlBase}/${iso}` : urlBase;
+        a.target = "_blank"; a.rel = "noopener";
+        a.textContent = "ver fonte ↗";
+        linha.appendChild(a);
+      }
+    }
+    corpo.appendChild(linha);
+  }
+
+  const ic = DADOS.clima?.datas?.indexOf(iso) ?? -1;
+  if (ic >= 0) {
+    temAlgo = true;
+    const linha = document.createElement("div"); linha.className = "det-linha";
+    const sw = document.createElement("span"); sw.className = "swatch"; sw.style.background = "var(--chuva)";
+    const nome = document.createElement("span"); nome.className = "det-nome"; nome.textContent = "Clima";
+    const valor = document.createElement("span"); valor.className = "det-valor";
+    valor.textContent = `${fmt1.format(DADOS.clima.chuva_mm[ic])} mm · máx ${fmt1.format(DADOS.clima.temp_max[ic])} °C`;
+    const f = document.createElement("span"); f.className = "det-fonte"; f.textContent = "Open-Meteo ERA5 (observado)";
+    linha.append(sw, nome, valor, f);
+    corpo.appendChild(linha);
+  }
+
+  if (!temAlgo) {
+    const vazio = document.createElement("div"); vazio.className = "det-linha";
+    vazio.textContent = "Sem registros para este dia (fim de semana ou fonte sem pregão).";
+    corpo.appendChild(vazio);
+  }
+
+  const acoes = document.getElementById("detAcoes");
+  acoes.textContent = "";
+  const aTabela = document.createElement("a");
+  aTabela.href = "#"; aTabela.textContent = "ver linha na tabela ↓";
+  aTabela.addEventListener("click", ev => {
+    ev.preventDefault();
+    document.querySelector("details").open = true;
+    const tr = document.querySelector(`tr[data-data="${iso}"]`);
+    if (tr) {
+      tr.scrollIntoView({ behavior: "smooth", block: "center" });
+      tr.classList.add("destacada");
+      setTimeout(() => tr.classList.remove("destacada"), 2500);
+    }
+  });
+  const aCsv = document.createElement("a");
+  aCsv.href = `${REPO_URL}/blob/main/data/raw/precos.csv`;
+  aCsv.target = "_blank"; aCsv.rel = "noopener";
+  aCsv.textContent = "CSV de preços no GitHub ↗";
+  const aClima = document.createElement("a");
+  aClima.href = `${REPO_URL}/blob/main/data/raw/clima.csv`;
+  aClima.target = "_blank"; aClima.rel = "noopener";
+  aClima.textContent = "CSV de clima no GitHub ↗";
+  acoes.append(aTabela, aCsv, aClima);
+}
+
 /* ---------- gráfico de linhas ----------
    opts: fmtVal(serie, i) → texto do tooltip · endLabel(serie) → rótulo direto
          fmtTick(v) → texto do eixo · refY → linha de referência (ex.: base 100) */
@@ -302,12 +419,28 @@ function desenharLinhas(container, series, altura = 300, opts = {}) {
   }
   el("line", { x1: M.l, x2: W - M.r, y1: H - M.b, y2: H - M.b, stroke: "var(--baseline)", "stroke-width": 1 }, svg);
 
+  // hairline persistente marcando o dia selecionado
+  if (opts.selecionada && todasDatas.includes(opts.selecionada))
+    el("line", { x1: X(opts.selecionada), x2: X(opts.selecionada), y1: M.t, y2: H - M.b,
+      stroke: "var(--text-muted)", "stroke-width": 1, "stroke-dasharray": "3 3" }, svg);
+
   const rotulos = [];
+  const comMarcadores = todasDatas.length <= 45;
   for (const s of series) {
     if (!s.datas.length) continue;
     const pts = s.datas.map((d, i) => `${X(d).toFixed(1)},${Y(s.valores[i]).toFixed(1)}`).join(" ");
     el("polyline", { points: pts, fill: "none", stroke: s.cor, "stroke-width": 2,
       "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+    // marcadores em todos os pontos (séries curtas): cada ponto é um registro
+    // clicável da base — anel na cor da superfície para legibilidade
+    if (comMarcadores)
+      s.datas.forEach((d, i) => el("circle", { cx: X(d), cy: Y(s.valores[i]), r: 3.5,
+        fill: s.cor, stroke: "var(--surface-1)", "stroke-width": 2 }, svg));
+    if (opts.selecionada) {
+      const i = s.datas.indexOf(opts.selecionada);
+      if (i >= 0) el("circle", { cx: X(s.datas[i]), cy: Y(s.valores[i]), r: 6,
+        fill: s.cor, stroke: "var(--surface-1)", "stroke-width": 2.5 }, svg);
+    }
     const ux = X(s.datas[s.datas.length - 1]), uy = Y(s.valores[s.valores.length - 1]);
     el("circle", { cx: ux, cy: uy, r: 4, fill: s.cor, stroke: "var(--surface-1)", "stroke-width": 2 }, svg);
     rotulos.push({ ux, uy, texto: endLabel(s) });
@@ -331,14 +464,19 @@ function desenharLinhas(container, series, altura = 300, opts = {}) {
       fill: "var(--text-secondary)" }, svg).textContent = r.texto;
   }
 
-  /* crosshair + tooltip com todas as séries */
+  /* crosshair + tooltip com todas as séries; clique seleciona o registro */
   const cross = el("line", { y1: M.t, y2: H - M.b, stroke: "var(--baseline)", "stroke-width": 1, visibility: "hidden" }, svg);
   const hit = el("rect", { x: M.l, y: M.t, width: W - M.l - M.r, height: H - M.t - M.b, fill: "transparent" }, svg);
-  hit.addEventListener("pointermove", ev => {
+  if (opts.onSelect) hit.style.cursor = "pointer";
+  const maisProxima = ev => {
     const box = svg.getBoundingClientRect();
     const mx = (ev.clientX - box.left) * (W / box.width);
     let melhor = todasDatas[0], dist = Infinity;
     for (const d of todasDatas) { const dd = Math.abs(X(d) - mx); if (dd < dist) { dist = dd; melhor = d; } }
+    return melhor;
+  };
+  hit.addEventListener("pointermove", ev => {
+    const melhor = maisProxima(ev);
     cross.setAttribute("x1", X(melhor)); cross.setAttribute("x2", X(melhor));
     cross.setAttribute("visibility", "visible");
     const linhas = series.map(s => {
@@ -348,10 +486,11 @@ function desenharLinhas(container, series, altura = 300, opts = {}) {
     if (linhas.length) mostrarTooltip(ev.clientX, ev.clientY, melhor, linhas);
   });
   hit.addEventListener("pointerleave", () => { cross.setAttribute("visibility", "hidden"); esconderTooltip(); });
+  if (opts.onSelect) hit.addEventListener("click", ev => opts.onSelect(maisProxima(ev)));
 }
 
 /* ---------- gráfico de barras (chuva) ---------- */
-function desenharBarras(container, datas, valores, cor, unidade, altura = 190) {
+function desenharBarras(container, datas, valores, cor, unidade, altura = 190, opts = {}) {
   container.textContent = "";
   const W = Math.max(container.clientWidth || 640, 320), H = altura;
   const M = { t: 12, r: 12, b: 26, l: 46 };
@@ -390,10 +529,15 @@ function desenharBarras(container, datas, valores, cor, unidade, altura = 190) {
     }
     const hitW = Math.max(larg + 4, 24);
     const hit = el("rect", { x: X(d) - hitW / 2, y: M.t, width: hitW, height: H - M.t - M.b, fill: "transparent" }, svg);
+    if (opts.onSelect) hit.style.cursor = "pointer";
     hit.addEventListener("pointermove", ev =>
       mostrarTooltip(ev.clientX, ev.clientY, d, [{ nome: "Chuva", cor: getComputedStyle(document.documentElement).getPropertyValue("--chuva"), valor: fmt1.format(v) + " " + unidade }]));
     hit.addEventListener("pointerleave", esconderTooltip);
+    if (opts.onSelect) hit.addEventListener("click", () => opts.onSelect(d));
   });
+  if (opts.selecionada && datas.includes(opts.selecionada))
+    el("line", { x1: X(opts.selecionada), x2: X(opts.selecionada), y1: M.t, y2: H - M.b,
+      stroke: "var(--text-muted)", "stroke-width": 1, "stroke-dasharray": "3 3" }, svg);
 }
 
 /* ---------- render geral ---------- */
@@ -456,6 +600,8 @@ function render() {
       refY: 100,
       fmtVal: (s, i) => `R$ ${fmtBR.format(s.brutos[i])} · ${pctStr(s.valores[i] - 100)}`,
       endLabel: s => `${s.nome} ${pctStr(s.valores[s.valores.length - 1] - 100)}`,
+      onSelect: selecionarData,
+      selecionada: dataSelecionada,
     });
   } else {
     titulo.textContent = "Preço da saca de 60 kg (R$)";
@@ -469,6 +615,8 @@ function render() {
       desenharLinhas(box, [s], 150, {
         aria: `Preço da saca de ${s.nome} em reais`,
         endLabel: x => "R$ " + fmtBR.format(x.valores[x.valores.length - 1]),
+        onSelect: selecionarData,
+        selecionada: dataSelecionada,
       });
     }
   }
@@ -476,9 +624,11 @@ function render() {
   /* clima */
   if (DADOS.clima?.datas?.length) {
     const [cd, chuva, temp] = filtrar(DADOS.clima.datas, DADOS.clima.chuva_mm, DADOS.clima.temp_max);
-    desenharBarras(document.getElementById("chartChuva"), cd, chuva, "var(--chuva)", "mm");
+    desenharBarras(document.getElementById("chartChuva"), cd, chuva, "var(--chuva)", "mm", 190,
+      { onSelect: selecionarData, selecionada: dataSelecionada });
     desenharLinhas(document.getElementById("chartTemp"),
-      [{ nome: "Temp. máx", cor: "var(--temp)", corVar: "--temp", datas: cd, valores: temp }], 190);
+      [{ nome: "Temp. máx", cor: "var(--temp)", corVar: "--temp", datas: cd, valores: temp }], 190,
+      { onSelect: selecionarData, selecionada: dataSelecionada });
   }
 
   /* correlações */
@@ -528,6 +678,7 @@ function render() {
   for (const d of datasOrd) {
     const o = porData.get(d);
     const tr = document.createElement("tr");
+    tr.dataset.data = d;
     const c0 = document.createElement("td"); c0.textContent = new Date(d + "T12:00:00").toLocaleDateString("pt-BR"); tr.appendChild(c0);
     for (const v of [o.milho, o.soja, o.trigo, o.chuva, o.temp]) {
       const td = document.createElement("td");
@@ -551,6 +702,13 @@ document.getElementById("modosPrecos").addEventListener("click", ev => {
   const btn = ev.target.closest("button"); if (!btn) return;
   modoPrecos = btn.dataset.modo;
   for (const b of document.querySelectorAll("#modosPrecos button")) b.setAttribute("aria-pressed", b === btn);
+  render();
+});
+
+/* fechar painel de detalhe */
+document.getElementById("fecharDetalhe").addEventListener("click", () => {
+  dataSelecionada = null;
+  document.getElementById("detalheDia").hidden = true;
   render();
 });
 window.addEventListener("resize", () => { clearTimeout(window.__rz); window.__rz = setTimeout(render, 150); });

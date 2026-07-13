@@ -44,6 +44,10 @@ GitHub Actions (dias úteis, 18h BRT)
        ├─ DuckDB: join clima × preços, pivot, correlações móveis
        ├─ data/processed/serie_completa.csv
        └─ docs/dados.json  → dashboard estático (GitHub Pages)
+  └─ src/prever.py
+       ├─ ridge sobre Δpreço (numpy puro): momentum + chuva/temp 7/30d + sazonalidade
+       ├─ projeta 10 dias úteis com o forecast Open-Meteo (nunca gravado nos CSVs)
+       └─ docs/previsao.json  → gráfico de projeção com banda ≈80% + backtest honesto
   └─ commit & push dos dados atualizados
 ```
 
@@ -113,5 +117,9 @@ Baixe o resultado como CSV, concatene ao `data/raw/precos.csv` e rode `src/trans
       que só o fallback tinha cotação são descartados (evita o degrau de ~R$9 CMA×Cotrijal
       virar ruído); o fallback só entra no bloco do congelamento do CMA (fev–jun/2026).
 - [ ] Correlações cruzadas entre commodities (milho × soja competem por área plantada)
+- [x] Primeiro modelo clima→preço: `src/prever.py` (ridge sobre variações, seleção de λ
+      em janela separada do backtest, baseline ingênuo como candidato). Estado atual do
+      backtest h=10: trigo **bate** o baseline (MAE 1,57 vs 1,70), soja empata, milho ainda
+      não — tudo publicado no dashboard, sem esconder.
 - [ ] Modelos econométricos: defasagens distribuídas de chuva sobre preço, sazonalidade
 - [ ] Câmbio USD/BRL como variável exógena (API do BCB/SGS)

@@ -171,6 +171,14 @@
     <div id="chartPrecos"></div>
   </section>
 
+  <section class="card" id="cardPrev" hidden>
+    <h2>Projeção de preço · próximos 10 dias úteis</h2>
+    <div class="desc">Modelo ridge sobre variações diárias · clima observado (ERA5) + previsão
+      Open-Meteo 16 dias · banda ≈80%. O backtest ao lado de cada série compara o erro do
+      modelo com o de não prever nada ("sem modelo") — leia antes de confiar.</div>
+    <div id="chartsPrev"></div>
+  </section>
+
   <section class="card" id="detalheDia" hidden>
     <button class="fechar" id="fecharDetalhe" aria-label="Fechar">✕</button>
     <h2 id="detTitulo"></h2>
@@ -222,6 +230,7 @@ const NS = "http://www.w3.org/2000/svg";
 const fmtBR = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fmt1 = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
 let DADOS = null;
+let PREVISAO = null;
 let diasFiltro = 90;
 let modoPrecos = "indice";
 let dataSelecionada = null;
@@ -540,6 +549,120 @@ function desenharBarras(container, datas, valores, cor, unidade, altura = 190, o
       stroke: "var(--text-muted)", "stroke-width": 1, "stroke-dasharray": "3 3" }, svg);
 }
 
+/* ---------- projeção: histórico recente + previsão tracejada com banda ----------
+   A banda é o intervalo ≈80% (±1,28σ√h dos resíduos de 1 passo do modelo);
+   a linha vertical marca o último fechamento observado. */
+function desenharProjecao(container, obs, prev, cor, corVar) {
+  const W = Math.max(container.clientWidth || 640, 320), H = 170;
+  const M = { t: 14, r: 92, b: 24, l: 46 };
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": "Projeção de preço com banda de incerteza" });
+  container.appendChild(svg);
+
+  const todasDatas = [...obs.datas, ...prev.datas];
+  const baixos = prev.valores.map((v, i) => v - prev.banda[i]);
+  const altos = prev.valores.map((v, i) => v + prev.banda[i]);
+  const vs = [...obs.valores, ...baixos, ...altos];
+  const vmin = Math.min(...vs), vmax = Math.max(...vs);
+  const folga = (vmax - vmin) * 0.1 || 1;
+  const X = escalaX(todasDatas, M.l, W - M.r);
+  const Y = escalaY(vmin - folga, vmax + folga, H - M.b, M.t);
+
+  for (const tv of ticksLimpos(vmin - folga, vmax + folga, 3)) {
+    el("line", { x1: M.l, x2: W - M.r, y1: Y(tv), y2: Y(tv), stroke: "var(--grid)", "stroke-width": 1 }, svg);
+    el("text", { x: M.l - 8, y: Y(tv) + 4, "text-anchor": "end", "font-size": 11, fill: "var(--text-muted)" }, svg)
+      .textContent = fmt1.format(tv);
+  }
+  const nx = Math.min(5, todasDatas.length);
+  for (let i = 0; i < nx; i++) {
+    const d = todasDatas[Math.round(i * (todasDatas.length - 1) / Math.max(nx - 1, 1))];
+    el("text", { x: X(d), y: H - 6, "text-anchor": "middle", "font-size": 11, fill: "var(--text-muted)" }, svg)
+      .textContent = mesCurto(d);
+  }
+
+  // divisa observado | projetado
+  const xDiv = X(obs.datas[obs.datas.length - 1]);
+  el("line", { x1: xDiv, x2: xDiv, y1: M.t, y2: H - M.b,
+    stroke: "var(--baseline)", "stroke-width": 1, "stroke-dasharray": "3 3" }, svg);
+  el("text", { x: xDiv - 4, y: M.t + 9, "text-anchor": "end", "font-size": 10,
+    fill: "var(--text-muted)" }, svg).textContent = "observado";
+  el("text", { x: xDiv + 4, y: M.t + 9, "font-size": 10,
+    fill: "var(--text-muted)" }, svg).textContent = "projeção";
+
+  // banda de incerteza (parte do último ponto observado, incerteza zero)
+  const ultObs = obs.valores[obs.valores.length - 1];
+  const cima = prev.datas.map((d, i) => `${X(d).toFixed(1)},${Y(altos[i]).toFixed(1)}`);
+  const baixo = prev.datas.map((d, i) => `${X(d).toFixed(1)},${Y(baixos[i]).toFixed(1)}`).reverse();
+  el("polygon", { points: [`${xDiv.toFixed(1)},${Y(ultObs).toFixed(1)}`, ...cima, ...baixo].join(" "),
+    fill: cor, "fill-opacity": 0.13, stroke: "none" }, svg);
+
+  el("polyline", { points: obs.datas.map((d, i) => `${X(d).toFixed(1)},${Y(obs.valores[i]).toFixed(1)}`).join(" "),
+    fill: "none", stroke: cor, "stroke-width": 2, "stroke-linejoin": "round" }, svg);
+  el("polyline", { points: [`${xDiv.toFixed(1)},${Y(ultObs).toFixed(1)}`,
+      ...prev.datas.map((d, i) => `${X(d).toFixed(1)},${Y(prev.valores[i]).toFixed(1)}`)].join(" "),
+    fill: "none", stroke: cor, "stroke-width": 2, "stroke-dasharray": "5 4",
+    "stroke-linejoin": "round" }, svg);
+
+  const uy = Y(prev.valores[prev.valores.length - 1]);
+  el("circle", { cx: X(prev.datas[prev.datas.length - 1]), cy: uy, r: 4,
+    fill: cor, stroke: "var(--surface-1)", "stroke-width": 2 }, svg);
+  el("text", { x: X(prev.datas[prev.datas.length - 1]) + 10, y: uy + 4, "font-size": 11,
+    "font-weight": 600, fill: "var(--text-secondary)" }, svg)
+    .textContent = "R$ " + fmtBR.format(prev.valores[prev.valores.length - 1]);
+
+  // tooltip: valor observado ou projetado (com ±banda) na data mais próxima
+  const hit = el("rect", { x: M.l, y: M.t, width: W - M.l - M.r, height: H - M.t - M.b, fill: "transparent" }, svg);
+  hit.addEventListener("pointermove", ev => {
+    const box = svg.getBoundingClientRect();
+    const mx = (ev.clientX - box.left) * (W / box.width);
+    let melhor = todasDatas[0], dist = Infinity;
+    for (const d of todasDatas) { const dd = Math.abs(X(d) - mx); if (dd < dist) { dist = dd; melhor = d; } }
+    const io = obs.datas.indexOf(melhor), ip = prev.datas.indexOf(melhor);
+    const corReal = getComputedStyle(document.documentElement).getPropertyValue(corVar) || cor;
+    const linhas = io >= 0
+      ? [{ nome: "Fechamento", cor: corReal, valor: "R$ " + fmtBR.format(obs.valores[io]) }]
+      : [{ nome: "Projeção", cor: corReal,
+           valor: `R$ ${fmtBR.format(prev.valores[ip])} ± ${fmt1.format(prev.banda[ip])}` }];
+    mostrarTooltip(ev.clientX, ev.clientY, melhor, linhas);
+  });
+  hit.addEventListener("pointerleave", esconderTooltip);
+}
+
+function renderPrevisao() {
+  const card = document.getElementById("cardPrev");
+  if (!PREVISAO?.series || !Object.keys(PREVISAO.series).length) { card.hidden = true; return; }
+  card.hidden = false;
+  const box = document.getElementById("chartsPrev");
+  box.textContent = "";
+
+  for (const s of SERIES) {
+    const p = PREVISAO.series[s.id];
+    const hist = DADOS?.precos?.[s.id];
+    if (!p || !hist || !p.datas.length) continue;
+
+    // últimos ~45 fechamentos observados como contexto
+    const ini = Math.max(0, hist.datas.length - 45);
+    const obs = { datas: hist.datas.slice(ini), valores: hist.valores.slice(ini) };
+
+    const t = document.createElement("div"); t.className = "mini-titulo";
+    const sw = document.createElement("span"); sw.className = "swatch"; sw.style.background = s.cor;
+    t.append(sw, document.createTextNode(s.nome));
+    const bt = p.backtest?.h10;
+    if (bt) {
+      const ganha = bt.mae_modelo <= bt.mae_ingenuo;
+      const badge = document.createElement("span");
+      badge.style.cssText = "font-weight:400;font-size:.75rem;color:var(--text-muted);margin-left:6px";
+      badge.textContent = `backtest 10d — erro do modelo R$ ${fmtBR.format(bt.mae_modelo)} vs sem modelo R$ ${fmtBR.format(bt.mae_ingenuo)} ` +
+        (ganha ? "✓ modelo ganha" : "· sem vantagem ainda");
+      t.appendChild(badge);
+    }
+    box.appendChild(t);
+    const c = document.createElement("div");
+    box.appendChild(c);
+    desenharProjecao(c, obs, p, s.cor, `--${s.id}`);
+  }
+}
+
 /* ---------- render geral ---------- */
 function render() {
   if (!DADOS) return;
@@ -620,6 +743,8 @@ function render() {
       });
     }
   }
+
+  renderPrevisao();
 
   /* clima */
   if (DADOS.clima?.datas?.length) {
@@ -721,6 +846,11 @@ fetch("dados.json")
     document.getElementById("updated").textContent =
       "Última atualização do pipeline: " + dt.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
     render();
+    // previsão é opcional: dashboard funciona sem ela (ex.: prever.py falhou)
+    return fetch("previsao.json")
+      .then(r => r.ok ? r.json() : null)
+      .then(p => { PREVISAO = p; renderPrevisao(); })
+      .catch(() => {});
   })
   .catch(e => {
     document.getElementById("updated").textContent = "Erro ao carregar dados: " + e.message;

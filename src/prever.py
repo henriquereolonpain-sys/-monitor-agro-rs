@@ -65,7 +65,8 @@ def carregar_series() -> pd.DataFrame:
     df = wide.reindex(dias)
     # preço parado em feriado/falha curta = repete o último (série administrada);
     # clima é diário e vem do join abaixo, sem ffill
-    df[COMMODITIES] = df[COMMODITIES].ffill(limit=5)
+    cols_precos = COMMODITIES + (["dolar"] if "dolar" in df.columns else [])
+    df[cols_precos] = df[cols_precos].ffill(limit=5)
     df["fb_milho"] = df["fb_milho"].astype("boolean").ffill(limit=5).fillna(False).astype(bool)
 
     # Emenda de nível no bloco de fallback do milho: o degrau CMA→Cotrijal
@@ -114,6 +115,12 @@ def montar_xy(df: pd.DataFrame, c: str):
         "cos_ano": np.cos(2 * np.pi * doy / 365.25),
         "fallback": df[f"fb_{c}"].astype(float),
     }, index=df.index)
+    # câmbio como exógena: retorno acumulado da PTAX em 5 e 20 dias úteis.
+    # Commodity cotada em R$ com referência externa em US$ → depreciação
+    # cambial tende a empurrar o preço interno com defasagem.
+    if "dolar" in df.columns:
+        feats["dolar_ret5"] = df["dolar"].pct_change(5)
+        feats["dolar_ret20"] = df["dolar"].pct_change(20)
     alvo = df[c].shift(-1) - df[c]
     ok = feats.notna().all(axis=1) & alvo.notna() & df[c].notna()
     return feats[ok].to_numpy(float), alvo[ok].to_numpy(float), feats.index[ok], list(feats)
@@ -159,6 +166,10 @@ def projetar(df, c, modelo, feat_names, clima_futuro):
     preco = float(df.loc[ultimo_dia, c])
     fb = float(df.loc[ultimo_dia, f"fb_{c}"])
     historico = df[c].dropna().copy()
+    # câmbio futuro é desconhecido: projeta com PTAX parada no último valor
+    # (o retorno acumulado decai a zero conforme a janela sai do observado)
+    dolar_vals = (df["dolar"].ffill().loc[:ultimo_dia].dropna().tolist()
+                  if "dolar_ret5" in feat_names else [])
 
     datas, valores, bandas = [], [], []
     dia, h = ultimo_dia, 0
@@ -182,6 +193,10 @@ def projetar(df, c, modelo, feat_names, clima_futuro):
             "cos_ano": float(np.cos(2 * np.pi * dia.dayofyear / 365.25)),
             "fallback": fb,
         }
+        if dolar_vals:
+            dolar_vals.append(dolar_vals[-1])
+            x["dolar_ret5"] = dolar_vals[-1] / dolar_vals[-6] - 1 if len(dolar_vals) > 5 else 0.0
+            x["dolar_ret20"] = dolar_vals[-1] / dolar_vals[-21] - 1 if len(dolar_vals) > 20 else 0.0
         preco += float(modelo.predict(np.array([[x[f] for f in feat_names]]))[0])
         historico.loc[dia] = preco
         datas.append(dia.strftime("%Y-%m-%d"))
@@ -257,6 +272,7 @@ def main() -> int:
         "gerado_em": datetime.now().isoformat(timespec="seconds"),
         "metodo": ("Ridge sobre Δpreço diário · features: momentum 5d, chuva/temp "
                    "acumuladas 7/30d (observado ERA5 + forecast Open-Meteo), "
+                   "câmbio PTAX (retornos 5/20d, projetado parado), "
                    "sazonalidade anual, dummy de fonte · banda ≈80% (±1,28σ√h)"),
         "series": {},
     }

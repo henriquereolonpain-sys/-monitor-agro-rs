@@ -61,6 +61,7 @@ histórico auditável — cada commit diário documenta o estado da fonte naquel
 | Milho | [Notícias Agrícolas · Milho CMA](https://www.noticiasagricolas.com.br/cotacoes/milho/milho-cma) · praça Passo Fundo/RS | [NA · Sindicatos/Cooperativas](https://www.noticiasagricolas.com.br/cotacoes/milho/milho-mercado-fisico-sindicatos-e-cooperativas) · Não-Me-Toque/RS → [site da Cotrijal](https://www.cotrijal.com.br/) |
 | Soja | [NA · Sindicatos e Cooperativas](https://www.noticiasagricolas.com.br/cotacoes/soja/soja-mercado-fisico-sindicatos-e-cooperativas) · Não-Me-Toque/RS (Cotrijal) | mesma página · Nonoai/RS → [site da Cotrijal](https://www.cotrijal.com.br/) |
 | Trigo | [NA · Trigo Mercado Físico](https://www.noticiasagricolas.com.br/cotacoes/trigo/trigo-mercado-fisico) · Não-Me-Toque/RS (Cotrijal) | mesma página · Nonoai/RS → [site da Cotrijal](https://www.cotrijal.com.br/) |
+| Dólar (PTAX venda) | [NA · Câmbio PTAX](https://www.noticiasagricolas.com.br/cotacoes/mercado-financeiro/cambio-ptax) — mesma estrutura de página das commodities | — |
 | Clima observado | [Open-Meteo Historical Weather API](https://open-meteo.com/en/docs/historical-weather-api) (reanálise ERA5) · lat/lon de Passo Fundo | — |
 | Clima previsto (só na projeção) | [Open-Meteo Forecast API](https://open-meteo.com/en/docs) · 16 dias | — |
 
@@ -152,10 +153,18 @@ Baixe o resultado como CSV, concatene ao `data/raw/precos.csv` e rode `src/trans
       (`{url}/AAAA-MM-DD`), tornando o import do BigQuery desnecessário. Dias avulsos em
       que só o fallback tinha cotação são descartados (evita o degrau de ~R$9 CMA×Cotrijal
       virar ruído); o fallback só entra no bloco do congelamento do CMA (fev–jun/2026).
-- [ ] Correlações cruzadas entre commodities (milho × soja competem por área plantada)
+- [x] ~~Correlações cruzadas entre commodities~~ — card no dashboard: Pearson sobre
+      **retornos diários** (nunca níveis — séries com tendência correlacionam por
+      construção), janela completa vs. últimos 90 dias, descartando dias em que ambas
+      as séries ficaram paradas (0×0 infla o n sem informação).
 - [x] Primeiro modelo clima→preço: `src/prever.py` (ridge sobre variações, seleção de λ
       em janela separada do backtest, baseline ingênuo como candidato). Estado atual do
       backtest h=10: trigo **bate** o baseline (MAE 1,57 vs 1,70), soja empata, milho ainda
       não — tudo publicado no dashboard, sem esconder.
 - [ ] Modelos econométricos: defasagens distribuídas de chuva sobre preço, sazonalidade
-- [ ] Câmbio USD/BRL como variável exógena (API do BCB/SGS)
+- [x] ~~Câmbio USD/BRL como variável exógena (API do BCB/SGS)~~ — sem API nova: o NA
+      republica a **PTAX** em `/cotacoes/mercado-financeiro/cambio-ptax`, com o mesmo
+      layout das páginas de commodities, então o dólar entrou como 4ª série do pipeline
+      (coleta diária, backfill datado, staleness, tudo de graça). No modelo, retornos
+      PTAX de 5/20 dias viram features; na projeção o câmbio fica **parado** no último
+      valor (prever dólar é outro problema — o modelo não finge que sabe).

@@ -101,4 +101,19 @@ COMMODITIES = {
             },
         ],
     },
+    # Câmbio entra pelo MESMO padrão de página do NA (div.fechamento +
+    # cot-fisicas, ~10 dias por página, URLs datadas) — nenhuma API nova.
+    # A página republica a PTAX do BCB, a taxa de referência dos contratos
+    # do agro. Variação exógena para os modelos preço×clima×câmbio.
+    "dolar": {
+        "unidade": "R$/US$ · PTAX venda",
+        "faixa_plausivel": (3.0, 10.0),
+        "fontes": [
+            {
+                "nome": "NA · Câmbio PTAX · Dólar",
+                "url": f"{BASE_NA}/mercado-financeiro/cambio-ptax",
+                "praca_regex": r"^\s*D[óo]lar",
+            },
+        ],
+    },
 }

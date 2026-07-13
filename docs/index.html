@@ -20,8 +20,11 @@
     --milho: #2a78d6;   /* slot 1 · blue  */
     --soja:  #1baf7a;   /* slot 2 · aqua  */
     --trigo: #eda100;   /* slot 3 · yellow — sub-3:1 no claro: rótulos diretos + tabela cobrem */
+    --dolar: #008300;   /* slot 4 · green (mesmo hex nos dois modos) */
     --chuva: #6da7ec;   /* sequencial blue-300 (não confundir com a linha do milho) */
     --temp:  #eb6834;   /* slot 8 · orange (semântica de calor; série única, sem legenda) */
+    --corr-pos: #2a78d6;  /* par divergente azul↔vermelho p/ correlações */
+    --corr-neg: #e34948;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -38,8 +41,11 @@
       --milho: #3987e5;
       --soja:  #199e70;
       --trigo: #c98500;
+      --dolar: #008300;
       --chuva: #5598e7;
       --temp:  #d95926;
+      --corr-pos: #3987e5;
+      --corr-neg: #e66767;
     }
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -80,6 +86,15 @@
     background: var(--surface-1); border: 1px solid var(--border);
     border-radius: 10px; padding: 16px; margin-top: 16px; position: relative;
   }
+  .kicker {
+    margin: 30px 0 -6px; font-size: .72rem; font-weight: 600;
+    letter-spacing: .09em; text-transform: uppercase; color: var(--text-muted);
+  }
+  .duo {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 16px; margin-top: 16px;
+  }
+  .duo .card { margin-top: 0; }
   .card h2 { font-size: .95rem; font-weight: 600; }
   .card .desc { font-size: .78rem; color: var(--text-muted); margin-bottom: 8px; }
   .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
@@ -129,6 +144,13 @@
   .corr { display: flex; gap: 20px; flex-wrap: wrap; font-size: .8rem; color: var(--text-secondary); }
   .corr b { color: var(--text-primary); font-variant-numeric: tabular-nums; }
 
+  .rbar { display: inline-flex; align-items: center; gap: 8px; }
+  .rbar .track { position: relative; width: 90px; height: 8px; background: var(--grid);
+    border-radius: 4px; flex: none; }
+  .rbar .fill { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+  .rbar .zero { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--baseline); }
+  .rbar .rval { font-variant-numeric: tabular-nums; min-width: 44px; }
+
   details { margin-top: 16px; }
   details summary { cursor: pointer; font-size: .85rem; color: var(--text-secondary); }
   table { border-collapse: collapse; width: 100%; margin-top: 10px; font-size: .78rem; }
@@ -156,6 +178,7 @@
 
   <section class="tiles" id="tiles"></section>
 
+  <div class="kicker">Mercado físico × câmbio</div>
   <section class="card">
     <div class="card-head">
       <div>
@@ -171,6 +194,7 @@
     <div id="chartPrecos"></div>
   </section>
 
+  <div class="kicker" id="kickerPrev" hidden>Projeção do modelo</div>
   <section class="card" id="cardPrev" hidden>
     <h2>Projeção de preço · próximos 10 dias úteis</h2>
     <div class="desc">Modelo ridge sobre variações diárias · clima observado (ERA5) + previsão
@@ -187,23 +211,35 @@
     <div class="det-acoes" id="detAcoes"></div>
   </section>
 
-  <section class="card">
-    <h2>Chuva diária (mm)</h2>
-    <div class="desc">Observado · Open-Meteo ERA5, Passo Fundo</div>
-    <div id="chartChuva"></div>
-  </section>
+  <div class="kicker">Clima · Passo Fundo</div>
+  <div class="duo">
+    <section class="card">
+      <h2>Chuva diária (mm)</h2>
+      <div class="desc">Observado · Open-Meteo ERA5, Passo Fundo</div>
+      <div id="chartChuva"></div>
+    </section>
 
-  <section class="card">
-    <h2>Temperatura máxima diária (°C)</h2>
-    <div class="desc">Observado · Open-Meteo ERA5, Passo Fundo</div>
-    <div id="chartTemp"></div>
-  </section>
+    <section class="card">
+      <h2>Temperatura máxima diária (°C)</h2>
+      <div class="desc">Observado · Open-Meteo ERA5, Passo Fundo</div>
+      <div id="chartTemp"></div>
+    </section>
+  </div>
 
-  <section class="card" id="cardCorr" hidden>
-    <h2>Correlação preço × clima (janela móvel de 30 dias)</h2>
-    <div class="desc">Pearson · calculado no DuckDB a cada atualização do pipeline</div>
-    <div class="corr" id="corr"></div>
-  </section>
+  <div class="kicker" id="kickerAnalises" hidden>Análises de correlação</div>
+  <div class="duo">
+    <section class="card" id="cardCruzadas" hidden>
+      <h2>Correlação entre séries (retornos diários)</h2>
+      <div class="desc">Pearson sobre variações, não níveis · dias em que ambas ficaram paradas não contam</div>
+      <div style="overflow-x:auto"><table id="tabCruzadas"></table></div>
+    </section>
+
+    <section class="card" id="cardCorr" hidden>
+      <h2>Correlação preço × clima (30 dias móveis)</h2>
+      <div class="desc">Pearson · calculado no DuckDB a cada atualização do pipeline</div>
+      <div class="corr" id="corr"></div>
+    </section>
+  </div>
 
   <details>
     <summary>Ver dados em tabela (período selecionado)</summary>
@@ -232,10 +268,13 @@
 "use strict";
 
 const SERIES = [
-  { id: "milho", nome: "Milho", cor: "var(--milho)" },
-  { id: "soja",  nome: "Soja",  cor: "var(--soja)"  },
-  { id: "trigo", nome: "Trigo", cor: "var(--trigo)" },
+  { id: "milho", nome: "Milho", cor: "var(--milho)", unidade: "saca 60 kg", casas: 2 },
+  { id: "soja",  nome: "Soja",  cor: "var(--soja)",  unidade: "saca 60 kg", casas: 2 },
+  { id: "trigo", nome: "Trigo", cor: "var(--trigo)", unidade: "saca 60 kg", casas: 2 },
+  { id: "dolar", nome: "Dólar", cor: "var(--dolar)", unidade: "R$/US$ · PTAX", casas: 4 },
 ];
+const fmtSerie = (s, v) => new Intl.NumberFormat("pt-BR",
+  { minimumFractionDigits: s.casas, maximumFractionDigits: s.casas }).format(v);
 const NS = "http://www.w3.org/2000/svg";
 const fmtBR = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fmt1 = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
@@ -336,7 +375,7 @@ function preencherDetalhe(iso) {
     const sw = document.createElement("span"); sw.className = "swatch"; sw.style.background = s.cor;
     const nome = document.createElement("span"); nome.className = "det-nome"; nome.textContent = s.nome;
     const valor = document.createElement("span"); valor.className = "det-valor";
-    valor.textContent = "R$ " + fmtBR.format(p.valores[i]);
+    valor.textContent = "R$ " + fmtSerie(s, p.valores[i]);
     linha.append(sw, nome, valor);
     const fonte = p.fontes?.[i];
     if (fonte) {
@@ -410,7 +449,7 @@ function desenharLinhas(container, series, altura = 300, opts = {}) {
     "aria-label": opts.aria || "Série temporal" });
   container.appendChild(svg);
 
-  const fmtVal = opts.fmtVal || ((s, i) => "R$ " + fmtBR.format(s.valores[i]));
+  const fmtVal = opts.fmtVal || ((s, i) => "R$ " + fmtSerie({ casas: s.casas ?? 2 }, s.valores[i]));
   const endLabel = opts.endLabel || (s => `${s.nome} ${fmt1.format(s.valores[s.valores.length - 1])}`);
   const fmtTick = opts.fmtTick || (v => fmt1.format(v));
 
@@ -686,8 +725,8 @@ function render() {
     const t = document.createElement("div"); t.className = "tile";
     const lb = document.createElement("div"); lb.className = "label";
     const sw = document.createElement("span"); sw.className = "swatch"; sw.style.background = s.cor;
-    lb.append(sw, document.createTextNode(`${s.nome} · saca 60 kg`));
-    const val = document.createElement("div"); val.className = "value"; val.textContent = "R$ " + fmtBR.format(r.ultimo);
+    lb.append(sw, document.createTextNode(`${s.nome} · ${s.unidade}`));
+    const val = document.createElement("div"); val.className = "value"; val.textContent = "R$ " + fmtSerie(s, r.ultimo);
     const meta = document.createElement("div"); meta.className = "meta";
     meta.textContent = "fechamento " + new Date(r.data + "T12:00:00").toLocaleDateString("pt-BR");
     t.append(lb, val, meta);
@@ -705,7 +744,7 @@ function render() {
      "reais":  small multiples, um mini-gráfico por commodity com escala própria */
   const series = SERIES.filter(s => DADOS.precos?.[s.id]).map(s => {
     const [datas, valores] = filtrar(DADOS.precos[s.id].datas, DADOS.precos[s.id].valores);
-    return { nome: s.nome, cor: s.cor, corVar: `--${s.id}`, datas, valores };
+    return { nome: s.nome, cor: s.cor, corVar: `--${s.id}`, casas: s.casas, datas, valores };
   }).filter(s => s.datas.length);
 
   const lg = document.getElementById("legendPrecos");
@@ -729,9 +768,9 @@ function render() {
       valores: s.valores.map(v => v / s.valores[0] * 100),
     }));
     desenharLinhas(boxPrecos, indexadas, 280, {
-      aria: "Variação percentual dos preços, base 100 no início do período",
+      aria: "Variação percentual dos preços e do câmbio, base 100 no início do período",
       refY: 100,
-      fmtVal: (s, i) => `R$ ${fmtBR.format(s.brutos[i])} · ${pctStr(s.valores[i] - 100)}`,
+      fmtVal: (s, i) => `R$ ${fmtSerie(s, s.brutos[i])} · ${pctStr(s.valores[i] - 100)}`,
       endLabel: s => `${s.nome} ${pctStr(s.valores[s.valores.length - 1] - 100)}`,
       onSelect: selecionarData,
       selecionada: dataSelecionada,
@@ -746,8 +785,9 @@ function render() {
       const box = document.createElement("div");
       boxPrecos.appendChild(box);
       desenharLinhas(box, [s], 150, {
-        aria: `Preço da saca de ${s.nome} em reais`,
-        endLabel: x => "R$ " + fmtBR.format(x.valores[x.valores.length - 1]),
+        aria: `${s.nome} em reais`,
+        endLabel: x => "R$ " + fmtSerie(s, x.valores[x.valores.length - 1]),
+        fmtTick: s.casas > 2 ? (v => fmtBR.format(v)) : undefined,
         onSelect: selecionarData,
         selecionada: dataSelecionada,
       });
@@ -791,7 +831,7 @@ function render() {
   const tab = document.getElementById("tabela");
   tab.textContent = "";
   const thead = document.createElement("tr");
-  for (const h of ["Data", "Milho (R$)", "Soja (R$)", "Trigo (R$)", "Chuva (mm)", "Temp. máx (°C)"]) {
+  for (const h of ["Data", "Milho (R$)", "Soja (R$)", "Trigo (R$)", "Dólar (PTAX)", "Chuva (mm)", "Temp. máx (°C)"]) {
     const th = document.createElement("th"); th.textContent = h; thead.appendChild(th);
   }
   tab.appendChild(thead);
@@ -815,9 +855,12 @@ function render() {
     const tr = document.createElement("tr");
     tr.dataset.data = d;
     const c0 = document.createElement("td"); c0.textContent = new Date(d + "T12:00:00").toLocaleDateString("pt-BR"); tr.appendChild(c0);
-    for (const v of [o.milho, o.soja, o.trigo, o.chuva, o.temp]) {
+    for (const [v, fmt] of [[o.milho, fmt1], [o.soja, fmt1], [o.trigo, fmt1],
+                            [o.dolar, v => fmtSerie({ casas: 4 }, v)],
+                            [o.chuva, fmt1], [o.temp, fmt1]]) {
       const td = document.createElement("td");
-      td.textContent = (v === undefined || v === null) ? "–" : fmt1.format(v);
+      td.textContent = (v === undefined || v === null) ? "–"
+        : (typeof fmt === "function" ? fmt(v) : fmt.format(v));
       tr.appendChild(td);
     }
     tab.appendChild(tr);
@@ -846,6 +889,57 @@ document.getElementById("fecharDetalhe").addEventListener("click", () => {
   document.getElementById("detalheDia").hidden = true;
   render();
 });
+
+/* correlações cruzadas — independentes do filtro de período, render único */
+function celulaR(r) {
+  const td = document.createElement("td");
+  if (r === null || r === undefined) { td.textContent = "–"; return td; }
+  const box = document.createElement("span"); box.className = "rbar";
+  const track = document.createElement("span"); track.className = "track";
+  const zero = document.createElement("span"); zero.className = "zero";
+  const fill = document.createElement("span"); fill.className = "fill";
+  const w = Math.min(Math.abs(r), 1) * 50;
+  fill.style.width = w + "%";
+  if (r >= 0) { fill.style.left = "50%"; fill.style.background = "var(--corr-pos)"; }
+  else { fill.style.left = (50 - w) + "%"; fill.style.background = "var(--corr-neg)"; }
+  track.append(zero, fill);
+  const val = document.createElement("span"); val.className = "rval";
+  val.textContent = (r > 0 ? "+" : "") + r.toFixed(2).replace(".", ",");
+  box.append(track, val);
+  td.appendChild(box);
+  return td;
+}
+
+function sincronizarKickers() {
+  document.getElementById("kickerPrev").hidden = document.getElementById("cardPrev").hidden;
+  document.getElementById("kickerAnalises").hidden =
+    document.getElementById("cardCorr").hidden && document.getElementById("cardCruzadas").hidden;
+}
+
+function renderCruzadas(cz) {
+  if (!cz?.pares?.length) return;
+  document.getElementById("cardCruzadas").hidden = false;
+  const tab = document.getElementById("tabCruzadas");
+  tab.textContent = "";
+  const thead = document.createElement("tr");
+  for (const h of ["Par", "Série completa", "Últimos 90 dias", "n (90d)"]) {
+    const th = document.createElement("th"); th.textContent = h; thead.appendChild(th);
+  }
+  tab.appendChild(thead);
+  const nomes = Object.fromEntries(SERIES.map(s => [s.id, s.nome]));
+  for (const p of cz.pares) {
+    const tr = document.createElement("tr");
+    const c0 = document.createElement("td");
+    c0.textContent = `${nomes[p.a] || p.a} × ${nomes[p.b] || p.b}`;
+    c0.style.textAlign = "left";
+    tr.appendChild(c0);
+    tr.appendChild(celulaR(p.valores[0]));
+    tr.appendChild(celulaR(p.valores[1]));
+    const cn = document.createElement("td"); cn.textContent = p.n ?? "–";
+    tr.appendChild(cn);
+    tab.appendChild(tr);
+  }
+}
 window.addEventListener("resize", () => { clearTimeout(window.__rz); window.__rz = setTimeout(render, 150); });
 
 fetch("dados.json")
@@ -856,10 +950,12 @@ fetch("dados.json")
     document.getElementById("updated").textContent =
       "Última atualização do pipeline: " + dt.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
     render();
+    renderCruzadas(d.cruzadas);
+    sincronizarKickers();
     // previsão é opcional: dashboard funciona sem ela (ex.: prever.py falhou)
     return fetch("previsao.json")
       .then(r => r.ok ? r.json() : null)
-      .then(p => { PREVISAO = p; renderPrevisao(); })
+      .then(p => { PREVISAO = p; renderPrevisao(); sincronizarKickers(); })
       .catch(() => {});
   })
   .catch(e => {

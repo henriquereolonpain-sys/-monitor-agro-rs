@@ -22,6 +22,8 @@ ARQ_SERIE = RAIZ / "data" / "processed" / "serie_completa.csv"
 ARQ_JSON = RAIZ / "docs" / "dados.json"
 
 COMMODITIES = ["milho", "soja", "trigo"]
+SERIES_PRECO = COMMODITIES + ["dolar"]  # dólar entra nas séries/resumo/cruzadas,
+                                        # mas fica fora das correlações clima→preço
 
 
 def main() -> int:
@@ -45,12 +47,15 @@ def main() -> int:
 
     # Série unificada: um registro por dia, preços em colunas (formato wide).
     # FULL JOIN preserva dias com clima e sem cotação (fins de semana) e vice-versa.
-    serie = con.execute("""
+    tem_dolar = con.execute(
+        "SELECT COUNT(*) FROM precos WHERE commodity = 'dolar'").fetchone()[0] > 0
+    col_dolar = "w.dolar AS dolar_ptax," if tem_dolar else "NULL AS dolar_ptax,"
+    serie = con.execute(f"""
         WITH wide AS (
             PIVOT precos ON commodity USING first(preco) GROUP BY data
         )
         SELECT COALESCE(c.data, w.data) AS data,
-               c.chuva_mm, c.temp_max,
+               c.chuva_mm, c.temp_max, {col_dolar}
                w.milho AS preco_milho, w.soja AS preco_soja, w.trigo AS preco_trigo
         FROM clima c
         FULL JOIN wide w USING (data)
@@ -77,21 +82,22 @@ def main() -> int:
         },
     }
 
-    for c in COMMODITIES:
+    for c in SERIES_PRECO:
         df = con.execute(
             "SELECT data, preco, fonte FROM precos WHERE commodity = ? ORDER BY data", [c]
         ).fetchdf()
         if df.empty:
             continue
+        casas = 4 if c == "dolar" else 2  # PTAX tem 4 casas significativas
         payload["precos"][c] = {
             "datas": df["data"].dt.strftime("%Y-%m-%d").tolist(),
-            "valores": df["preco"].round(2).tolist(),
+            "valores": df["preco"].round(casas).tolist(),
             "fontes": df["fonte"].tolist(),
         }
         ultimo = df.iloc[-1]
         base_30d = df[df["data"] >= ultimo["data"] - pd.Timedelta(days=30)].iloc[0]
         payload["resumo"][c] = {
-            "ultimo": round(float(ultimo["preco"]), 2),
+            "ultimo": round(float(ultimo["preco"]), casas),
             "data": ultimo["data"].strftime("%Y-%m-%d"),
             "var_30d_pct": round(
                 (float(ultimo["preco"]) / float(base_30d["preco"]) - 1) * 100, 1
@@ -128,6 +134,34 @@ def main() -> int:
                 "temp_30d": round(r[1], 3) if r[1] is not None else None,
                 "n": r[2],
             }
+
+    # Correlações cruzadas entre séries (retornos diários, não níveis: níveis
+    # de séries com tendência correlacionam por construção — retorno é o que
+    # separa "andam juntas" de "só sobem juntas"). Duas janelas: história
+    # completa e últimos 90 dias, para expor mudança de regime.
+    wide = con.execute("""
+        PIVOT precos ON commodity USING first(preco) GROUP BY data ORDER BY data
+    """).fetchdf().set_index("data")
+    presentes = [c for c in SERIES_PRECO if c in wide.columns]
+    # dias úteis + ffill curto: retorno de segunda usa sexta como base, e a
+    # série administrada (parada) vira retorno 0 em vez de buraco
+    ret = (wide[presentes].asfreq("B").ffill(limit=5)
+           .pct_change().dropna(how="all"))
+    payload["cruzadas"] = {"pares": [], "janelas": ["completa", "90d"]}
+    for i, a in enumerate(presentes):
+        for b in presentes[i + 1:]:
+            par = {"a": a, "b": b, "valores": []}
+            for janela in (ret, ret.tail(63)):  # ~90 dias corridos = 63 úteis
+                amostra = janela[[a, b]].dropna()
+                # descarta dias em que ambos ficaram parados (0×0 infla n
+                # sem informação) — só conta dia com movimento em ao menos um
+                amostra = amostra[(amostra[a] != 0) | (amostra[b] != 0)]
+                r = amostra[a].corr(amostra[b]) if len(amostra) >= 20 else None
+                par["valores"].append(round(float(r), 2) if pd.notna(r) else None)
+            par["n"] = int(len(amostra))
+            payload["cruzadas"]["pares"].append(par)
+    if payload["cruzadas"]["pares"]:
+        print(f"[transform] correlações cruzadas: {len(payload['cruzadas']['pares'])} pares")
 
     ARQ_JSON.parent.mkdir(parents=True, exist_ok=True)
     ARQ_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")

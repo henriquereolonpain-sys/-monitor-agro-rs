@@ -72,6 +72,7 @@ trocas de fonte ficam documentadas na própria série.
 ```bash
 pip install -r requirements.txt
 python src/coletar.py      # coleta preços + clima → data/raw/
+python src/backfill.py     # opcional: preenche histórico via páginas datadas do NA
 python src/transformar.py  # DuckDB → data/processed/ + docs/dados.json
 python -m http.server 8000 --directory docs   # dashboard em http://localhost:8000
 ```
@@ -106,7 +107,11 @@ Baixe o resultado como CSV, concatene ao `data/raw/precos.csv` e rode `src/trans
 
 ## Roadmap analítico
 
-- [ ] Backfill do histórico da v1 (milho desde 2025)
+- [x] ~~Backfill do histórico da v1 (milho desde 2025)~~ — feito melhor: `src/backfill.py`
+      reconstrói as 3 séries desde jan/2025 pelas páginas datadas do Notícias Agrícolas
+      (`{url}/AAAA-MM-DD`), tornando o import do BigQuery desnecessário. Dias avulsos em
+      que só o fallback tinha cotação são descartados (evita o degrau de ~R$9 CMA×Cotrijal
+      virar ruído); o fallback só entra no bloco do congelamento do CMA (fev–jun/2026).
 - [ ] Correlações cruzadas entre commodities (milho × soja competem por área plantada)
 - [ ] Modelos econométricos: defasagens distribuídas de chuva sobre preço, sazonalidade
 - [ ] Câmbio USD/BRL como variável exógena (API do BCB/SGS)

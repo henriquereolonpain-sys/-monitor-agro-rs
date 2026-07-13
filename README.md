@@ -58,10 +58,15 @@ histórico auditável — cada commit diário documenta o estado da fonte naquel
 
 | Série | Fonte primária | Fallbacks (em ordem) |
 |---|---|---|
-| Milho | Notícias Agrícolas · Milho CMA · praça Passo Fundo/RS | NA · Sindicatos/Cooperativas · Não-Me-Toque/RS → site da Cotrijal |
-| Soja | NA · Sindicatos e Cooperativas · Não-Me-Toque/RS (Cotrijal) | mesma página · Nonoai/RS → site da Cotrijal |
-| Trigo | NA · Trigo Mercado Físico · Não-Me-Toque/RS (Cotrijal) | mesma página · Nonoai/RS → site da Cotrijal |
-| Clima | Open-Meteo Archive API (ERA5) · lat/lon de Passo Fundo | — |
+| Milho | [Notícias Agrícolas · Milho CMA](https://www.noticiasagricolas.com.br/cotacoes/milho/milho-cma) · praça Passo Fundo/RS | [NA · Sindicatos/Cooperativas](https://www.noticiasagricolas.com.br/cotacoes/milho/milho-mercado-fisico-sindicatos-e-cooperativas) · Não-Me-Toque/RS → [site da Cotrijal](https://www.cotrijal.com.br/) |
+| Soja | [NA · Sindicatos e Cooperativas](https://www.noticiasagricolas.com.br/cotacoes/soja/soja-mercado-fisico-sindicatos-e-cooperativas) · Não-Me-Toque/RS (Cotrijal) | mesma página · Nonoai/RS → [site da Cotrijal](https://www.cotrijal.com.br/) |
+| Trigo | [NA · Trigo Mercado Físico](https://www.noticiasagricolas.com.br/cotacoes/trigo/trigo-mercado-fisico) · Não-Me-Toque/RS (Cotrijal) | mesma página · Nonoai/RS → [site da Cotrijal](https://www.cotrijal.com.br/) |
+| Clima observado | [Open-Meteo Historical Weather API](https://open-meteo.com/en/docs/historical-weather-api) (reanálise ERA5) · lat/lon de Passo Fundo | — |
+| Clima previsto (só na projeção) | [Open-Meteo Forecast API](https://open-meteo.com/en/docs) · 16 dias | — |
+
+Qualquer fechamento pode ser conferido na fonte: as páginas do Notícias Agrícolas aceitam
+a data no fim da URL (ex.: [`/cotacoes/milho/milho-cma/2026-06-03`](https://www.noticiasagricolas.com.br/cotacoes/milho/milho-cma/2026-06-03)),
+e é assim que o dashboard monta o link "ver fonte ↗" de cada ponto clicado.
 
 O último fallback é o **site oficial da Cotrijal** (cotrijal.com.br), que embute as cotações
 do dia num JSON server-side — independência total do domínio Notícias Agrícolas. Limitações:

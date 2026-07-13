@@ -211,8 +211,18 @@
   </details>
 
   <footer>
-    Dados versionados em git e atualizados por GitHub Actions em dias úteis ·
-    <a href="https://github.com/henriquereolonpain-sys" rel="noopener">GitHub</a>
+    <div><b>Fontes:</b>
+      preços · <a href="https://www.noticiasagricolas.com.br/cotacoes/milho/milho-cma" target="_blank" rel="noopener">Milho CMA</a> ·
+      <a href="https://www.noticiasagricolas.com.br/cotacoes/soja/soja-mercado-fisico-sindicatos-e-cooperativas" target="_blank" rel="noopener">Soja</a> ·
+      <a href="https://www.noticiasagricolas.com.br/cotacoes/trigo/trigo-mercado-fisico" target="_blank" rel="noopener">Trigo</a>
+      (Notícias Agrícolas, mercado físico) ·
+      fallback <a href="https://www.cotrijal.com.br/" target="_blank" rel="noopener">Cotrijal</a> ·
+      clima observado <a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank" rel="noopener">Open-Meteo ERA5</a> ·
+      previsão de clima <a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener">Open-Meteo Forecast</a>.
+      Cada ponto dos gráficos de preço é clicável e linka a página datada da fonte.
+    </div>
+    <div style="margin-top:6px">Dados versionados em git e atualizados por GitHub Actions em dias úteis ·
+    <a href="https://github.com/henriquereolonpain-sys/-monitor-agro-rs" rel="noopener">código e CSVs no GitHub</a></div>
   </footer>
 </div>
 
@@ -234,7 +244,7 @@ let PREVISAO = null;
 let diasFiltro = 90;
 let modoPrecos = "indice";
 let dataSelecionada = null;
-const REPO_URL = "https://github.com/henriquereolonpain-sys/monitor-agro-rs";
+const REPO_URL = "https://github.com/henriquereolonpain-sys/-monitor-agro-rs";
 
 function el(tag, attrs, parent) {
   const n = document.createElementNS(NS, tag);

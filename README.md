@@ -1,3 +1,4 @@
+
 # Monitor Agro RS — Preços de Commodities × Clima (Passo Fundo/RS)
 
 Pipeline diário que coleta preços do mercado físico de **milho, soja e trigo** em praças
@@ -6,7 +7,9 @@ Passo Fundo/RS. Sucessor do [monitor-clima-pf](https://github.com/henriquereolon
 redesenhado a partir das lições aprendidas na v1.
 
 **Dashboard:** publicado via GitHub Pages a partir de [`docs/`](docs/) · atualizado automaticamente em dias úteis.
-
+<img width="800" height="584" alt="c" src="https://github.com/user-attachments/assets/1a4959cb-2b56-41c0-9a92-e5dedb9dd596" />
+<img width="1118" height="691" alt="a" src="https://github.com/user-attachments/assets/4dc3ef91-2022-4555-b5c0-1aca3c5085d6" />
+<img width="1089" height="718" alt="b" src="https://github.com/user-attachments/assets/d0c089ce-0e7a-4db7-8f79-3aab04c3b856" />
 ---
 
 ## Por que uma v2? (postmortem da v1)

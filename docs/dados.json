@@ -1,5 +1,5 @@
 {
- "atualizado_em": "2026-08-03T22:09:37",
+ "atualizado_em": "2026-08-04T22:13:00",
  "precos": {
   "milho": {
    "datas": [
@@ -397,7 +397,8 @@
     "2026-07-29",
     "2026-07-30",
     "2026-07-31",
-    "2026-08-03"
+    "2026-08-03",
+    "2026-08-04"
    ],
    "valores": [
     70.5,
@@ -794,7 +795,8 @@
     68.0,
     68.0,
     68.0,
-    68.0
+    68.0,
+    68.5
    ],
    "fontes": [
     "NA · Milho CMA · Passo Fundo/RS",
@@ -1149,6 +1151,7 @@
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
@@ -5289,7 +5292,8 @@
    "2026-07-28",
    "2026-07-29",
    "2026-07-30",
-   "2026-07-31"
+   "2026-07-31",
+   "2026-08-01"
   ],
   "chuva_mm": [
    2.4,
@@ -5868,7 +5872,8 @@
    23.4,
    26.3,
    0.0,
-   0.0
+   0.0,
+   6.3
   ],
   "temp_max": [
    28.4,
@@ -6447,14 +6452,15 @@
    21.8,
    21.1,
    22.4,
-   24.2
+   24.2,
+   26.7
   ]
  },
  "resumo": {
   "milho": {
-   "ultimo": 68.0,
-   "data": "2026-08-03",
-   "var_30d_pct": -0.7
+   "ultimo": 68.5,
+   "data": "2026-08-04",
+   "var_30d_pct": 0.0
   },
   "soja": {
    "ultimo": 126.0,
@@ -6507,7 +6513,7 @@
      -0.0,
      -0.07
     ],
-    "n": 32
+    "n": 33
    },
    {
     "a": "milho",
@@ -6516,7 +6522,7 @@
      0.01,
      null
     ],
-    "n": 10
+    "n": 11
    },
    {
     "a": "milho",
@@ -6543,7 +6549,7 @@
      0.19,
      0.15
     ],
-    "n": 62
+    "n": 61
    },
    {
     "a": "trigo",
@@ -6552,7 +6558,7 @@
      0.08,
      0.02
     ],
-    "n": 62
+    "n": 61
    }
   ],
   "janelas": [

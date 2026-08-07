@@ -1,5 +1,5 @@
 {
- "atualizado_em": "2026-08-07T01:00:59",
+ "atualizado_em": "2026-08-07T21:39:38",
  "precos": {
   "milho": {
    "datas": [
@@ -400,7 +400,8 @@
     "2026-08-03",
     "2026-08-04",
     "2026-08-05",
-    "2026-08-06"
+    "2026-08-06",
+    "2026-08-07"
    ],
    "valores": [
     70.5,
@@ -800,6 +801,7 @@
     68.0,
     68.5,
     68.5,
+    68.5,
     68.5
    ],
    "fontes": [
@@ -1155,6 +1157,7 @@
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
@@ -1598,7 +1601,8 @@
     "2026-08-03",
     "2026-08-04",
     "2026-08-05",
-    "2026-08-06"
+    "2026-08-06",
+    "2026-08-07"
    ],
    "valores": [
     125.0,
@@ -1994,6 +1998,7 @@
     124.0,
     124.0,
     123.0,
+    123.0,
     123.0
    ],
    "fontes": [
@@ -2381,6 +2386,7 @@
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Sindicatos e Cooperativas · Nonoai/RS",
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
@@ -2788,7 +2794,8 @@
     "2026-08-03",
     "2026-08-04",
     "2026-08-05",
-    "2026-08-06"
+    "2026-08-06",
+    "2026-08-07"
    ],
    "valores": [
     65.0,
@@ -3154,6 +3161,7 @@
     69.0,
     69.0,
     69.0,
+    70.0,
     70.0,
     70.0,
     70.0,
@@ -3580,6 +3588,7 @@
     "NA · Trigo Mercado Físico · Nonoai/RS",
     "NA · Trigo Mercado Físico · Nonoai/RS",
     "NA · Trigo Mercado Físico · Nonoai/RS",
+    "NA · Trigo Mercado Físico · Nonoai/RS",
     "NA · Trigo Mercado Físico · Nonoai/RS"
    ]
   },
@@ -3975,7 +3984,8 @@
     "2026-08-03",
     "2026-08-04",
     "2026-08-05",
-    "2026-08-06"
+    "2026-08-06",
+    "2026-08-07"
    ],
    "valores": [
     6.2086,
@@ -4368,9 +4378,11 @@
     5.0723,
     5.1053,
     5.1154,
-    5.1017
+    5.1017,
+    5.0908
    ],
    "fontes": [
+    "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
@@ -6519,23 +6531,23 @@
  "resumo": {
   "milho": {
    "ultimo": 68.5,
-   "data": "2026-08-06",
+   "data": "2026-08-07",
    "var_30d_pct": 0.0
   },
   "soja": {
    "ultimo": 123.0,
-   "data": "2026-08-06",
-   "var_30d_pct": 1.7
+   "data": "2026-08-07",
+   "var_30d_pct": 0.8
   },
   "trigo": {
    "ultimo": 70.0,
-   "data": "2026-08-06",
+   "data": "2026-08-07",
    "var_30d_pct": 0.0
   },
   "dolar": {
-   "ultimo": 5.1017,
-   "data": "2026-08-06",
-   "var_30d_pct": -0.9
+   "ultimo": 5.0908,
+   "data": "2026-08-07",
+   "var_30d_pct": -1.2
   }
  },
  "correlacoes": {
@@ -6571,9 +6583,9 @@
     "b": "soja",
     "valores": [
      0.0,
-     -0.05
+     -0.04
     ],
-    "n": 35
+    "n": 34
    },
    {
     "a": "milho",
@@ -6582,7 +6594,7 @@
      0.01,
      null
     ],
-    "n": 11
+    "n": 10
    },
    {
     "a": "milho",
@@ -6598,9 +6610,9 @@
     "b": "trigo",
     "valores": [
      0.06,
-     0.0
+     -0.04
     ],
-    "n": 37
+    "n": 36
    },
    {
     "a": "soja",
@@ -6616,7 +6628,7 @@
     "b": "dolar",
     "valores": [
      0.08,
-     0.01
+     0.02
     ],
     "n": 62
    }

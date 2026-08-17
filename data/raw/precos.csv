@@ -1560,35 +1560,39 @@ data,commodity,preco,fonte,coletado_em
 2026-07-31,milho,68.0,NA · Milho CMA · Passo Fundo/RS,2026-08-13T21:45:44
 2026-07-31,soja,124.0,NA · Sindicatos e Cooperativas · Nonoai/RS,2026-08-07T21:39:36
 2026-07-31,trigo,70.0,NA · Trigo Mercado Físico · Nonoai/RS,2026-08-07T21:39:36
-2026-08-03,dolar,5.0723,NA · Câmbio PTAX · Dólar,2026-08-14T21:25:21
+2026-08-03,dolar,5.0723,NA · Câmbio PTAX · Dólar,2026-08-17T21:27:10
 2026-08-03,milho,68.0,NA · Milho CMA · Passo Fundo/RS,2026-08-14T21:25:21
 2026-08-03,soja,124.0,NA · Sindicatos e Cooperativas · Nonoai/RS,2026-08-07T21:39:36
 2026-08-03,trigo,70.0,NA · Trigo Mercado Físico · Nonoai/RS,2026-08-07T21:39:36
-2026-08-04,dolar,5.1053,NA · Câmbio PTAX · Dólar,2026-08-14T21:25:21
-2026-08-04,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-14T21:25:21
+2026-08-04,dolar,5.1053,NA · Câmbio PTAX · Dólar,2026-08-17T21:27:10
+2026-08-04,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-17T21:27:09
 2026-08-04,soja,124.0,NA · Sindicatos e Cooperativas · Nonoai/RS,2026-08-07T21:39:36
 2026-08-04,trigo,70.0,NA · Trigo Mercado Físico · Nonoai/RS,2026-08-07T21:39:36
-2026-08-05,dolar,5.1154,NA · Câmbio PTAX · Dólar,2026-08-14T21:25:21
-2026-08-05,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-14T21:25:21
+2026-08-05,dolar,5.1154,NA · Câmbio PTAX · Dólar,2026-08-17T21:27:10
+2026-08-05,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-17T21:27:09
 2026-08-05,soja,123.0,NA · Sindicatos e Cooperativas · Nonoai/RS,2026-08-07T21:39:36
 2026-08-05,trigo,70.0,NA · Trigo Mercado Físico · Nonoai/RS,2026-08-07T21:39:36
-2026-08-06,dolar,5.1017,NA · Câmbio PTAX · Dólar,2026-08-14T21:25:21
-2026-08-06,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-14T21:25:21
+2026-08-06,dolar,5.1017,NA · Câmbio PTAX · Dólar,2026-08-17T21:27:10
+2026-08-06,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-17T21:27:09
 2026-08-06,soja,123.0,NA · Sindicatos e Cooperativas · Nonoai/RS,2026-08-07T21:39:36
 2026-08-06,trigo,70.0,NA · Trigo Mercado Físico · Nonoai/RS,2026-08-07T21:39:36
-2026-08-07,dolar,5.0908,NA · Câmbio PTAX · Dólar,2026-08-14T21:25:21
-2026-08-07,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-14T21:25:21
+2026-08-07,dolar,5.0908,NA · Câmbio PTAX · Dólar,2026-08-17T21:27:10
+2026-08-07,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-17T21:27:09
 2026-08-07,soja,123.0,NA · Sindicatos e Cooperativas · Nonoai/RS,2026-08-07T21:39:36
 2026-08-07,trigo,70.0,NA · Trigo Mercado Físico · Nonoai/RS,2026-08-07T21:39:36
-2026-08-10,dolar,5.0963,NA · Câmbio PTAX · Dólar,2026-08-14T21:25:21
-2026-08-10,soja,123.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-08-14T21:25:21
-2026-08-10,trigo,70.0,NA · Trigo Mercado Físico · Não-Me-Toque/RS,2026-08-14T21:25:21
-2026-08-11,dolar,5.1285,NA · Câmbio PTAX · Dólar,2026-08-14T21:25:21
-2026-08-11,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-14T21:25:21
-2026-08-11,soja,123.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-08-14T21:25:21
-2026-08-11,trigo,70.0,NA · Trigo Mercado Físico · Não-Me-Toque/RS,2026-08-14T21:25:21
-2026-08-12,dolar,5.1639,NA · Câmbio PTAX · Dólar,2026-08-14T21:25:21
-2026-08-12,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-14T21:25:21
-2026-08-13,dolar,5.1859,NA · Câmbio PTAX · Dólar,2026-08-14T21:25:21
-2026-08-13,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-14T21:25:21
-2026-08-14,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-14T21:25:21
+2026-08-10,dolar,5.0963,NA · Câmbio PTAX · Dólar,2026-08-17T21:27:10
+2026-08-10,soja,123.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-08-17T21:27:10
+2026-08-10,trigo,70.0,NA · Trigo Mercado Físico · Não-Me-Toque/RS,2026-08-17T21:27:10
+2026-08-11,dolar,5.1285,NA · Câmbio PTAX · Dólar,2026-08-17T21:27:10
+2026-08-11,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-17T21:27:09
+2026-08-11,soja,123.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-08-17T21:27:10
+2026-08-11,trigo,70.0,NA · Trigo Mercado Físico · Não-Me-Toque/RS,2026-08-17T21:27:10
+2026-08-12,dolar,5.1639,NA · Câmbio PTAX · Dólar,2026-08-17T21:27:10
+2026-08-12,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-17T21:27:09
+2026-08-13,dolar,5.1859,NA · Câmbio PTAX · Dólar,2026-08-17T21:27:10
+2026-08-13,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-17T21:27:09
+2026-08-14,dolar,5.2236,NA · Câmbio PTAX · Dólar,2026-08-17T21:27:10
+2026-08-14,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-17T21:27:09
+2026-08-17,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-08-17T21:27:09
+2026-08-17,soja,125.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-08-17T21:27:10
+2026-08-17,trigo,70.0,NA · Trigo Mercado Físico · Não-Me-Toque/RS,2026-08-17T21:27:10

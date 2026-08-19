@@ -1,10 +1,9 @@
 {
- "gerado_em": "2026-08-18T21:24:54",
+ "gerado_em": "2026-08-19T21:25:36",
  "metodo": "Ridge sobre Δpreço diário · features: momentum 5d, chuva/temp acumuladas 7/30d (observado ERA5 + forecast Open-Meteo), câmbio PTAX (retornos 5/20d, projetado parado), sazonalidade anual, dummy de fonte · banda ≈80% (±1,28σ√h)",
  "series": {
   "milho": {
    "datas": [
-    "2026-08-19",
     "2026-08-20",
     "2026-08-21",
     "2026-08-24",
@@ -13,7 +12,8 @@
     "2026-08-27",
     "2026-08-28",
     "2026-08-31",
-    "2026-09-01"
+    "2026-09-01",
+    "2026-09-02"
    ],
    "valores": [
     68.49,
@@ -40,7 +40,7 @@
     2.53
    ],
    "ultimo_observado": {
-    "data": "2026-08-18",
+    "data": "2026-08-19",
     "preco": 68.5
    },
    "backtest": {
@@ -50,8 +50,8 @@
      "n": 55
     },
     "h10": {
-     "mae_modelo": 0.68,
-     "mae_ingenuo": 0.58,
+     "mae_modelo": 0.66,
+     "mae_ingenuo": 0.56,
      "n": 50
     }
    },
@@ -68,11 +68,10 @@
     "dolar_ret20": 0.0
    },
    "lambda": 1000000000.0,
-   "n_treino": 403
+   "n_treino": 404
   },
   "soja": {
    "datas": [
-    "2026-08-19",
     "2026-08-20",
     "2026-08-21",
     "2026-08-24",
@@ -81,19 +80,20 @@
     "2026-08-27",
     "2026-08-28",
     "2026-08-31",
-    "2026-09-01"
+    "2026-09-01",
+    "2026-09-02"
    ],
    "valores": [
-    127.14,
-    127.23,
-    127.28,
-    127.4,
-    127.54,
-    127.68,
-    127.82,
-    127.95,
-    128.04,
-    128.12
+    128.11,
+    128.19,
+    128.32,
+    128.47,
+    128.62,
+    128.78,
+    128.92,
+    129.03,
+    129.14,
+    129.25
    ],
    "banda": [
     0.93,
@@ -108,39 +108,38 @@
     2.95
    ],
    "ultimo_observado": {
-    "data": "2026-08-18",
-    "preco": 127.0
+    "data": "2026-08-19",
+    "preco": 128.0
    },
    "backtest": {
     "h5": {
-     "mae_modelo": 1.71,
-     "mae_ingenuo": 1.67,
+     "mae_modelo": 1.73,
+     "mae_ingenuo": 1.71,
      "n": 55
     },
     "h10": {
-     "mae_modelo": 2.83,
-     "mae_ingenuo": 2.86,
+     "mae_modelo": 2.87,
+     "mae_ingenuo": 2.9,
      "n": 50
     }
    },
    "coeficientes_padronizados": {
-    "delta_5d": -0.0203,
-    "chuva_30d": 0.0021,
-    "temp_30d": -0.0298,
-    "chuva_7d": 0.0021,
-    "temp_7d": -0.0366,
-    "sin_ano": -0.008,
-    "cos_ano": 0.0072,
+    "delta_5d": -0.0172,
+    "chuva_30d": 0.0072,
+    "temp_30d": -0.0281,
+    "chuva_7d": 0.0017,
+    "temp_7d": -0.0328,
+    "sin_ano": -0.0095,
+    "cos_ano": 0.0041,
     "fallback": 0.0,
-    "dolar_ret5": 0.0984,
-    "dolar_ret20": 0.0486
+    "dolar_ret5": 0.0992,
+    "dolar_ret20": 0.0501
    },
    "lambda": 100.0,
-   "n_treino": 381
+   "n_treino": 382
   },
   "trigo": {
    "datas": [
-    "2026-08-19",
     "2026-08-20",
     "2026-08-21",
     "2026-08-24",
@@ -149,19 +148,20 @@
     "2026-08-27",
     "2026-08-28",
     "2026-08-31",
-    "2026-09-01"
+    "2026-09-01",
+    "2026-09-02"
    ],
    "valores": [
-    69.89,
-    69.79,
-    69.67,
-    69.57,
-    69.46,
-    69.36,
-    69.26,
-    69.17,
-    69.06,
-    68.92
+    69.91,
+    69.8,
+    69.7,
+    69.59,
+    69.49,
+    69.4,
+    69.31,
+    69.21,
+    69.11,
+    69.0
    ],
    "banda": [
     0.5,
@@ -176,35 +176,35 @@
     1.57
    ],
    "ultimo_observado": {
-    "data": "2026-08-18",
+    "data": "2026-08-19",
     "preco": 70.0
    },
    "backtest": {
     "h5": {
-     "mae_modelo": 0.88,
-     "mae_ingenuo": 0.38,
+     "mae_modelo": 0.83,
+     "mae_ingenuo": 0.35,
      "n": 55
     },
     "h10": {
-     "mae_modelo": 1.63,
-     "mae_ingenuo": 0.64,
+     "mae_modelo": 1.52,
+     "mae_ingenuo": 0.56,
      "n": 50
     }
    },
    "coeficientes_padronizados": {
-    "delta_5d": 0.0126,
-    "chuva_30d": 0.0002,
-    "temp_30d": -0.0235,
-    "chuva_7d": -0.0249,
-    "temp_7d": 0.0144,
-    "sin_ano": 0.0978,
-    "cos_ano": -0.0063,
+    "delta_5d": 0.0127,
+    "chuva_30d": 0.001,
+    "temp_30d": -0.023,
+    "chuva_7d": -0.025,
+    "temp_7d": 0.015,
+    "sin_ano": 0.0974,
+    "cos_ano": -0.0071,
     "fallback": 0.0,
-    "dolar_ret5": 0.0219,
-    "dolar_ret20": 0.0048
+    "dolar_ret5": 0.022,
+    "dolar_ret20": 0.0051
    },
    "lambda": 20.0,
-   "n_treino": 381
+   "n_treino": 382
   }
  }
 }

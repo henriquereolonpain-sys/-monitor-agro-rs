@@ -1,5 +1,5 @@
 {
- "atualizado_em": "2026-08-24T21:29:31",
+ "atualizado_em": "2026-08-25T21:28:37",
  "precos": {
   "milho": {
    "datas": [
@@ -411,7 +411,8 @@
     "2026-08-19",
     "2026-08-20",
     "2026-08-21",
-    "2026-08-24"
+    "2026-08-24",
+    "2026-08-25"
    ],
    "valores": [
     70.5,
@@ -822,7 +823,8 @@
     68.5,
     68.5,
     68.5,
-    68.5
+    68.5,
+    69.0
    ],
    "fontes": [
     "NA · Milho CMA · Passo Fundo/RS",
@@ -1177,6 +1179,7 @@
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
@@ -4065,7 +4068,8 @@
     "2026-08-19",
     "2026-08-20",
     "2026-08-21",
-    "2026-08-24"
+    "2026-08-24",
+    "2026-08-25"
    ],
    "valores": [
     6.2086,
@@ -4470,9 +4474,11 @@
     5.1714,
     5.1862,
     5.1625,
-    5.1512
+    5.1512,
+    5.149
    ],
    "fontes": [
+    "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
@@ -5478,7 +5484,8 @@
    "2026-08-18",
    "2026-08-19",
    "2026-08-20",
-   "2026-08-21"
+   "2026-08-21",
+   "2026-08-22"
   ],
   "chuva_mm": [
    2.4,
@@ -6078,7 +6085,8 @@
    0.5,
    4.2,
    13.7,
-   1.0
+   1.0,
+   0.0
   ],
   "temp_max": [
    28.4,
@@ -6678,14 +6686,15 @@
    28.6,
    21.4,
    19.2,
-   14.6
+   14.6,
+   13.1
   ]
  },
  "resumo": {
   "milho": {
-   "ultimo": 68.5,
-   "data": "2026-08-24",
-   "var_30d_pct": 0.7
+   "ultimo": 69.0,
+   "data": "2026-08-25",
+   "var_30d_pct": 1.5
   },
   "soja": {
    "ultimo": 130.0,
@@ -6698,8 +6707,8 @@
    "var_30d_pct": 0.0
   },
   "dolar": {
-   "ultimo": 5.1512,
-   "data": "2026-08-24",
+   "ultimo": 5.149,
+   "data": "2026-08-25",
    "var_30d_pct": 1.0
   }
  },
@@ -6738,7 +6747,7 @@
      -0.0,
      -0.07
     ],
-    "n": 32
+    "n": 33
    },
    {
     "a": "milho",
@@ -6747,7 +6756,7 @@
      0.01,
      null
     ],
-    "n": 8
+    "n": 9
    },
    {
     "a": "milho",

@@ -1,5 +1,5 @@
 {
- "atualizado_em": "2026-08-29T03:05:35",
+ "atualizado_em": "2026-09-01T00:24:55",
  "precos": {
   "milho": {
    "datas": [
@@ -415,7 +415,8 @@
     "2026-08-25",
     "2026-08-26",
     "2026-08-27",
-    "2026-08-28"
+    "2026-08-28",
+    "2026-08-31"
    ],
    "valores": [
     70.5,
@@ -830,6 +831,7 @@
     69.0,
     69.0,
     69.0,
+    69.0,
     69.0
    ],
    "fontes": [
@@ -1185,6 +1187,7 @@
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
@@ -1653,7 +1656,8 @@
     "2026-08-20",
     "2026-08-21",
     "2026-08-24",
-    "2026-08-27"
+    "2026-08-27",
+    "2026-08-31"
    ],
    "valores": [
     125.0,
@@ -2059,7 +2063,8 @@
     128.0,
     130.0,
     130.0,
-    133.0
+    133.0,
+    135.0
    ],
    "fontes": [
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
@@ -2457,6 +2462,7 @@
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
@@ -4108,7 +4114,8 @@
     "2026-08-25",
     "2026-08-26",
     "2026-08-27",
-    "2026-08-28"
+    "2026-08-28",
+    "2026-08-31"
    ],
    "valores": [
     6.2086,
@@ -4517,9 +4524,11 @@
     5.149,
     5.1604,
     5.1642,
-    5.2005
+    5.2005,
+    5.1816
    ],
    "fontes": [
+    "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
@@ -5534,7 +5543,10 @@
    "2026-08-23",
    "2026-08-24",
    "2026-08-25",
-   "2026-08-26"
+   "2026-08-26",
+   "2026-08-27",
+   "2026-08-28",
+   "2026-08-29"
   ],
   "chuva_mm": [
    2.4,
@@ -6139,7 +6151,10 @@
    0.0,
    0.0,
    0.0,
-   0.0
+   0.0,
+   0.9,
+   6.9,
+   33.5
   ],
   "temp_max": [
    28.4,
@@ -6744,19 +6759,22 @@
    14.2,
    17.4,
    21.2,
-   23.5
+   23.5,
+   26.5,
+   27.6,
+   19.9
   ]
  },
  "resumo": {
   "milho": {
    "ultimo": 69.0,
-   "data": "2026-08-28",
+   "data": "2026-08-31",
    "var_30d_pct": 1.5
   },
   "soja": {
-   "ultimo": 133.0,
-   "data": "2026-08-27",
-   "var_30d_pct": 5.6
+   "ultimo": 135.0,
+   "data": "2026-08-31",
+   "var_30d_pct": 8.9
   },
   "trigo": {
    "ultimo": 70.0,
@@ -6764,26 +6782,26 @@
    "var_30d_pct": 0.0
   },
   "dolar": {
-   "ultimo": 5.2005,
-   "data": "2026-08-28",
-   "var_30d_pct": 1.5
+   "ultimo": 5.1816,
+   "data": "2026-08-31",
+   "var_30d_pct": 2.2
   }
  },
  "correlacoes": {
   "milho": {
-   "chuva_30d": 0.082,
-   "temp_30d": 0.018,
-   "n": 411
+   "chuva_30d": 0.083,
+   "temp_30d": 0.017,
+   "n": 413
   },
   "soja": {
-   "chuva_30d": 0.077,
-   "temp_30d": 0.192,
-   "n": 403
+   "chuva_30d": 0.081,
+   "temp_30d": 0.185,
+   "n": 404
   },
   "trigo": {
-   "chuva_30d": 0.1,
-   "temp_30d": -0.426,
-   "n": 406
+   "chuva_30d": 0.101,
+   "temp_30d": -0.427,
+   "n": 408
   }
  },
  "fontes_urls": {
@@ -6802,7 +6820,7 @@
     "b": "soja",
     "valores": [
      -0.0,
-     -0.1
+     0.04
     ],
     "n": 32
    },
@@ -6813,14 +6831,14 @@
      0.01,
      null
     ],
-    "n": 8
+    "n": 7
    },
    {
     "a": "milho",
     "b": "dolar",
     "valores": [
      -0.05,
-     0.13
+     0.26
     ],
     "n": 62
    },
@@ -6828,8 +6846,8 @@
     "a": "soja",
     "b": "trigo",
     "valores": [
-     0.06,
-     -0.18
+     0.05,
+     -0.16
     ],
     "n": 32
    },
@@ -6837,8 +6855,8 @@
     "a": "soja",
     "b": "dolar",
     "valores": [
-     0.18,
-     0.13
+     0.17,
+     0.11
     ],
     "n": 62
    },
@@ -6847,7 +6865,7 @@
     "b": "dolar",
     "valores": [
      0.08,
-     0.25
+     0.24
     ],
     "n": 62
    }

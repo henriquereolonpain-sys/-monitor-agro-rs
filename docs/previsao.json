@@ -1,10 +1,9 @@
 {
- "gerado_em": "2026-09-16T23:33:50",
+ "gerado_em": "2026-09-17T23:25:18",
  "metodo": "Ridge sobre Δpreço diário · features: momentum 5d, chuva/temp acumuladas 7/30d (observado ERA5 + forecast Open-Meteo), câmbio PTAX (retornos 5/20d, projetado parado), sazonalidade anual, dummy de fonte · banda ≈80% (±1,28σ√h)",
  "series": {
   "milho": {
    "datas": [
-    "2026-09-17",
     "2026-09-18",
     "2026-09-21",
     "2026-09-22",
@@ -13,7 +12,8 @@
     "2026-09-25",
     "2026-09-28",
     "2026-09-29",
-    "2026-09-30"
+    "2026-09-30",
+    "2026-10-01"
    ],
    "valores": [
     69.99,
@@ -35,23 +35,23 @@
     1.75,
     1.92,
     2.07,
-    2.22,
+    2.21,
     2.35,
     2.48
    ],
    "ultimo_observado": {
-    "data": "2026-09-16",
+    "data": "2026-09-17",
     "preco": 70.0
    },
    "backtest": {
     "h5": {
-     "mae_modelo": 0.42,
-     "mae_ingenuo": 0.36,
+     "mae_modelo": 0.41,
+     "mae_ingenuo": 0.35,
      "n": 55
     },
     "h10": {
-     "mae_modelo": 0.77,
-     "mae_ingenuo": 0.69,
+     "mae_modelo": 0.78,
+     "mae_ingenuo": 0.7,
      "n": 50
     }
    },
@@ -68,11 +68,10 @@
     "dolar_ret20": 0.0
    },
    "lambda": 1000000000.0,
-   "n_treino": 424
+   "n_treino": 425
   },
   "soja": {
    "datas": [
-    "2026-09-17",
     "2026-09-18",
     "2026-09-21",
     "2026-09-22",
@@ -81,66 +80,66 @@
     "2026-09-25",
     "2026-09-28",
     "2026-09-29",
-    "2026-09-30"
+    "2026-09-30",
+    "2026-10-01"
    ],
    "valores": [
-    140.23,
-    140.49,
-    140.66,
-    140.85,
-    141.02,
-    141.19,
-    141.35,
-    141.51,
-    141.68,
-    141.87
+    140.26,
+    140.41,
+    140.6,
+    140.77,
+    140.94,
+    141.08,
+    141.25,
+    141.41,
+    141.59,
+    141.79
    ],
    "banda": [
     0.96,
     1.36,
     1.66,
     1.92,
-    2.15,
+    2.14,
     2.35,
     2.54,
     2.71,
     2.88,
-    3.04
+    3.03
    ],
    "ultimo_observado": {
-    "data": "2026-09-16",
+    "data": "2026-09-17",
     "preco": 140.0
    },
    "backtest": {
     "h5": {
-     "mae_modelo": 2.78,
-     "mae_ingenuo": 2.62,
+     "mae_modelo": 2.82,
+     "mae_ingenuo": 2.64,
      "n": 55
     },
     "h10": {
-     "mae_modelo": 5.2,
-     "mae_ingenuo": 4.92,
+     "mae_modelo": 5.23,
+     "mae_ingenuo": 4.9,
      "n": 50
     }
    },
    "coeficientes_padronizados": {
-    "delta_5d": 0.0096,
-    "chuva_30d": 0.0237,
-    "temp_30d": -0.0108,
+    "delta_5d": 0.0092,
+    "chuva_30d": 0.0238,
+    "temp_30d": -0.011,
     "chuva_7d": -0.0061,
-    "temp_7d": -0.0244,
-    "sin_ano": -0.0356,
-    "cos_ano": -0.0139,
+    "temp_7d": -0.0238,
+    "sin_ano": -0.0349,
+    "cos_ano": -0.0141,
     "fallback": 0.0,
-    "dolar_ret5": 0.0965,
-    "dolar_ret20": 0.0583
+    "dolar_ret5": 0.096,
+    "dolar_ret20": 0.0586
    },
    "lambda": 100.0,
-   "n_treino": 401
+   "n_treino": 402
   },
   "trigo": {
    "datas": [
-    "2026-09-17",
     "2026-09-18",
     "2026-09-21",
     "2026-09-22",
@@ -149,18 +148,19 @@
     "2026-09-25",
     "2026-09-28",
     "2026-09-29",
-    "2026-09-30"
+    "2026-09-30",
+    "2026-10-01"
    ],
    "valores": [
-    71.89,
-    71.8,
-    71.64,
-    71.48,
-    71.31,
-    71.12,
-    70.92,
-    70.78,
-    70.64,
+    71.92,
+    71.77,
+    71.61,
+    71.45,
+    71.28,
+    71.11,
+    70.97,
+    70.81,
+    70.63,
     70.44
    ],
    "banda": [
@@ -168,43 +168,43 @@
     0.69,
     0.84,
     0.97,
-    1.09,
+    1.08,
     1.19,
     1.28,
     1.37,
     1.46,
-    1.54
+    1.53
    ],
    "ultimo_observado": {
-    "data": "2026-09-16",
+    "data": "2026-09-17",
     "preco": 72.0
    },
    "backtest": {
     "h5": {
-     "mae_modelo": 1.06,
-     "mae_ingenuo": 0.2,
+     "mae_modelo": 0.96,
+     "mae_ingenuo": 0.18,
      "n": 55
     },
     "h10": {
-     "mae_modelo": 2.0,
-     "mae_ingenuo": 0.26,
+     "mae_modelo": 1.86,
+     "mae_ingenuo": 0.28,
      "n": 50
     }
    },
    "coeficientes_padronizados": {
-    "delta_5d": 0.019,
-    "chuva_30d": 0.007,
-    "temp_30d": -0.0268,
-    "chuva_7d": -0.0246,
-    "temp_7d": 0.0225,
-    "sin_ano": 0.095,
-    "cos_ano": -0.0098,
+    "delta_5d": 0.0202,
+    "chuva_30d": 0.0046,
+    "temp_30d": -0.0106,
+    "chuva_7d": -0.0235,
+    "temp_7d": 0.015,
+    "sin_ano": 0.0843,
+    "cos_ano": -0.0155,
     "fallback": 0.0,
-    "dolar_ret5": 0.019,
-    "dolar_ret20": 0.0084
+    "dolar_ret5": 0.0189,
+    "dolar_ret20": 0.0071
    },
-   "lambda": 5.0,
-   "n_treino": 401
+   "lambda": 20.0,
+   "n_treino": 402
   }
  }
 }

@@ -1,5 +1,5 @@
 {
- "atualizado_em": "2026-10-01T00:24:10",
+ "atualizado_em": "2026-10-02T00:34:13",
  "precos": {
   "milho": {
    "datas": [
@@ -435,7 +435,8 @@
     "2026-09-25",
     "2026-09-28",
     "2026-09-29",
-    "2026-09-30"
+    "2026-09-30",
+    "2026-10-01"
    ],
    "valores": [
     70.5,
@@ -870,7 +871,8 @@
     70.0,
     72.0,
     72.0,
-    71.5
+    71.5,
+    71.0
    ],
    "fontes": [
     "NA · Milho CMA · Passo Fundo/RS",
@@ -1225,6 +1227,7 @@
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
@@ -4292,7 +4295,8 @@
     "2026-09-25",
     "2026-09-28",
     "2026-09-29",
-    "2026-09-30"
+    "2026-09-30",
+    "2026-10-01"
    ],
    "valores": [
     6.2086,
@@ -4723,9 +4727,11 @@
     5.1991,
     5.2132,
     5.2204,
-    5.1809
+    5.1809,
+    5.2079
    ],
    "fontes": [
+    "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
@@ -5795,7 +5801,8 @@
    "2026-09-25",
    "2026-09-26",
    "2026-09-27",
-   "2026-09-28"
+   "2026-09-28",
+   "2026-09-29"
   ],
   "chuva_mm": [
    2.4,
@@ -6433,7 +6440,8 @@
    0.0,
    0.2,
    0.6,
-   38.0
+   38.0,
+   31.5
   ],
   "temp_max": [
    28.4,
@@ -7071,14 +7079,15 @@
    26.0,
    28.6,
    24.3,
-   19.9
+   19.9,
+   22.0
   ]
  },
  "resumo": {
   "milho": {
-   "ultimo": 71.5,
-   "data": "2026-09-30",
-   "var_30d_pct": 3.6
+   "ultimo": 71.0,
+   "data": "2026-10-01",
+   "var_30d_pct": 2.9
   },
   "soja": {
    "ultimo": 140.0,
@@ -7091,21 +7100,21 @@
    "var_30d_pct": 7.1
   },
   "dolar": {
-   "ultimo": 5.1809,
-   "data": "2026-09-30",
-   "var_30d_pct": -0.0
+   "ultimo": 5.2079,
+   "data": "2026-10-01",
+   "var_30d_pct": 1.0
   }
  },
  "correlacoes": {
   "milho": {
-   "chuva_30d": 0.106,
-   "temp_30d": 0.001,
-   "n": 431
+   "chuva_30d": 0.108,
+   "temp_30d": -0.0,
+   "n": 432
   },
   "soja": {
-   "chuva_30d": 0.218,
-   "temp_30d": 0.043,
-   "n": 420
+   "chuva_30d": 0.226,
+   "temp_30d": 0.036,
+   "n": 421
   },
   "trigo": {
    "chuva_30d": 0.145,
@@ -7129,7 +7138,7 @@
     "b": "soja",
     "valores": [
      -0.0,
-     -0.09
+     -0.06
     ],
     "n": 31
    },
@@ -7140,14 +7149,14 @@
      0.01,
      null
     ],
-    "n": 9
+    "n": 10
    },
    {
     "a": "milho",
     "b": "dolar",
     "valores": [
      -0.04,
-     0.18
+     0.15
     ],
     "n": 62
    },
@@ -7156,9 +7165,9 @@
     "b": "trigo",
     "valores": [
      0.05,
-     -0.2
+     -0.19
     ],
-    "n": 29
+    "n": 28
    },
    {
     "a": "soja",
@@ -7174,7 +7183,7 @@
     "b": "dolar",
     "valores": [
      0.05,
-     -0.27
+     -0.28
     ],
     "n": 62
    }

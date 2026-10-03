@@ -1,5 +1,5 @@
 {
- "atualizado_em": "2026-10-02T00:34:13",
+ "atualizado_em": "2026-10-03T00:11:23",
  "precos": {
   "milho": {
    "datas": [
@@ -436,7 +436,8 @@
     "2026-09-28",
     "2026-09-29",
     "2026-09-30",
-    "2026-10-01"
+    "2026-10-01",
+    "2026-10-02"
    ],
    "valores": [
     70.5,
@@ -872,6 +873,7 @@
     72.0,
     72.0,
     71.5,
+    71.0,
     71.0
    ],
    "fontes": [
@@ -1227,6 +1229,7 @@
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
@@ -4296,7 +4299,8 @@
     "2026-09-28",
     "2026-09-29",
     "2026-09-30",
-    "2026-10-01"
+    "2026-10-01",
+    "2026-10-02"
    ],
    "valores": [
     6.2086,
@@ -4728,9 +4732,11 @@
     5.2132,
     5.2204,
     5.1809,
-    5.2079
+    5.2079,
+    5.2238
    ],
    "fontes": [
+    "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
@@ -5802,7 +5808,8 @@
    "2026-09-26",
    "2026-09-27",
    "2026-09-28",
-   "2026-09-29"
+   "2026-09-29",
+   "2026-09-30"
   ],
   "chuva_mm": [
    2.4,
@@ -6441,7 +6448,8 @@
    0.2,
    0.6,
    38.0,
-   31.5
+   31.5,
+   0.8
   ],
   "temp_max": [
    28.4,
@@ -7080,13 +7088,14 @@
    28.6,
    24.3,
    19.9,
-   22.0
+   22.0,
+   20.6
   ]
  },
  "resumo": {
   "milho": {
    "ultimo": 71.0,
-   "data": "2026-10-01",
+   "data": "2026-10-02",
    "var_30d_pct": 2.9
   },
   "soja": {
@@ -7100,16 +7109,16 @@
    "var_30d_pct": 7.1
   },
   "dolar": {
-   "ultimo": 5.2079,
-   "data": "2026-10-01",
-   "var_30d_pct": 1.0
+   "ultimo": 5.2238,
+   "data": "2026-10-02",
+   "var_30d_pct": 1.9
   }
  },
  "correlacoes": {
   "milho": {
-   "chuva_30d": 0.108,
-   "temp_30d": -0.0,
-   "n": 432
+   "chuva_30d": 0.11,
+   "temp_30d": -0.001,
+   "n": 433
   },
   "soja": {
    "chuva_30d": 0.226,
@@ -7174,7 +7183,7 @@
     "b": "dolar",
     "valores": [
      0.16,
-     -0.14
+     -0.15
     ],
     "n": 62
    },

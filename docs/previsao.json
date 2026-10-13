@@ -1,5 +1,5 @@
 {
- "gerado_em": "2026-10-10T00:30:39",
+ "gerado_em": "2026-10-13T02:26:54",
  "metodo": "Ridge sobre Δpreço diário · features: momentum 5d, chuva/temp acumuladas 7/30d (observado ERA5 + forecast Open-Meteo), câmbio PTAX (retornos 5/20d, projetado parado), sazonalidade anual, dummy de fonte · banda ≈80% (±1,28σ√h)",
  "series": {
   "milho": {
@@ -85,15 +85,15 @@
    ],
    "valores": [
     136.02,
-    136.08,
-    136.11,
-    136.11,
-    136.16,
-    136.24,
-    136.31,
+    136.07,
+    136.09,
+    136.1,
+    136.15,
+    136.23,
+    136.3,
     136.36,
     136.41,
-    136.46
+    136.44
    ],
    "banda": [
     0.97,
@@ -124,16 +124,16 @@
     }
    },
    "coeficientes_padronizados": {
-    "delta_5d": 0.0177,
-    "chuva_30d": 0.0189,
-    "temp_30d": -0.0034,
-    "chuva_7d": -0.0125,
+    "delta_5d": 0.0178,
+    "chuva_30d": 0.0188,
+    "temp_30d": -0.0036,
+    "chuva_7d": -0.0143,
     "temp_7d": -0.0315,
-    "sin_ano": -0.0232,
-    "cos_ano": -0.0192,
+    "sin_ano": -0.0236,
+    "cos_ano": -0.0194,
     "fallback": 0.0,
     "dolar_ret5": 0.0921,
-    "dolar_ret20": 0.0503
+    "dolar_ret20": 0.0502
    },
    "lambda": 100.0,
    "n_treino": 418
@@ -152,16 +152,16 @@
     "2026-10-23"
    ],
    "valores": [
-    74.87,
+    74.88,
     74.75,
-    74.61,
-    74.44,
-    74.28,
-    74.17,
-    74.06,
-    73.95,
-    73.85,
-    73.78
+    74.6,
+    74.48,
+    74.37,
+    74.29,
+    74.23,
+    74.16,
+    74.1,
+    74.04
    ],
    "banda": [
     0.5,
@@ -193,15 +193,15 @@
    },
    "coeficientes_padronizados": {
     "delta_5d": 0.0363,
-    "chuva_30d": 0.0163,
+    "chuva_30d": 0.0165,
     "temp_30d": -0.0254,
-    "chuva_7d": -0.0319,
+    "chuva_7d": -0.0315,
     "temp_7d": 0.0122,
-    "sin_ano": 0.0781,
-    "cos_ano": 0.0013,
+    "sin_ano": 0.0782,
+    "cos_ano": 0.0014,
     "fallback": 0.0,
-    "dolar_ret5": 0.0222,
-    "dolar_ret20": 0.0042
+    "dolar_ret5": 0.022,
+    "dolar_ret20": 0.0043
    },
    "lambda": 2.0,
    "n_treino": 418

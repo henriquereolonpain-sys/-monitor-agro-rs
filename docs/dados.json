@@ -1,5 +1,5 @@
 {
- "atualizado_em": "2026-10-15T23:33:47",
+ "atualizado_em": "2026-10-16T23:17:01",
  "precos": {
   "milho": {
    "datas": [
@@ -445,7 +445,8 @@
     "2026-10-09",
     "2026-10-13",
     "2026-10-14",
-    "2026-10-15"
+    "2026-10-15",
+    "2026-10-16"
    ],
    "valores": [
     70.5,
@@ -890,6 +891,7 @@
     70.0,
     70.0,
     69.0,
+    69.0,
     69.0
    ],
    "fontes": [
@@ -1245,6 +1247,7 @@
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
@@ -4368,7 +4371,8 @@
     "2026-10-09",
     "2026-10-13",
     "2026-10-14",
-    "2026-10-15"
+    "2026-10-15",
+    "2026-10-16"
    ],
    "valores": [
     6.2086,
@@ -4809,9 +4813,11 @@
     4.9892,
     5.0096,
     5.0441,
-    5.0521
+    5.0521,
+    5.0826
    ],
    "fontes": [
+    "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
@@ -5905,7 +5911,8 @@
    "2026-10-09",
    "2026-10-10",
    "2026-10-11",
-   "2026-10-12"
+   "2026-10-12",
+   "2026-10-13"
   ],
   "chuva_mm": [
    2.4,
@@ -6557,7 +6564,8 @@
    14.2,
    5.2,
    15.5,
-   24.1
+   24.1,
+   10.7
   ],
   "temp_max": [
    28.4,
@@ -7209,13 +7217,14 @@
    23.0,
    23.2,
    19.2,
-   20.4
+   20.4,
+   21.4
   ]
  },
  "resumo": {
   "milho": {
    "ultimo": 69.0,
-   "data": "2026-10-15",
+   "data": "2026-10-16",
    "var_30d_pct": -1.4
   },
   "soja": {
@@ -7229,16 +7238,16 @@
    "var_30d_pct": 4.2
   },
   "dolar": {
-   "ultimo": 5.0521,
-   "data": "2026-10-15",
-   "var_30d_pct": -1.9
+   "ultimo": 5.0826,
+   "data": "2026-10-16",
+   "var_30d_pct": -1.4
   }
  },
  "correlacoes": {
   "milho": {
-   "chuva_30d": 0.122,
-   "temp_30d": -0.007,
-   "n": 440
+   "chuva_30d": 0.124,
+   "temp_30d": -0.008,
+   "n": 441
   },
   "soja": {
    "chuva_30d": 0.283,

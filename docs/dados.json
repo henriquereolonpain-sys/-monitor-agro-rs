@@ -1,5 +1,5 @@
 {
- "atualizado_em": "2026-10-16T23:17:01",
+ "atualizado_em": "2026-10-20T00:07:44",
  "precos": {
   "milho": {
    "datas": [
@@ -446,7 +446,8 @@
     "2026-10-13",
     "2026-10-14",
     "2026-10-15",
-    "2026-10-16"
+    "2026-10-16",
+    "2026-10-19"
    ],
    "valores": [
     70.5,
@@ -892,6 +893,7 @@
     70.0,
     69.0,
     69.0,
+    69.0,
     69.0
    ],
    "fontes": [
@@ -1247,6 +1249,7 @@
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
@@ -1773,7 +1776,8 @@
     "2026-10-08",
     "2026-10-09",
     "2026-10-14",
-    "2026-10-15"
+    "2026-10-15",
+    "2026-10-19"
    ],
    "valores": [
     125.0,
@@ -2204,6 +2208,7 @@
     136.0,
     136.0,
     137.0,
+    136.0,
     136.0,
     136.0,
     136.0
@@ -2638,6 +2643,7 @@
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS"
    ]
@@ -4372,7 +4378,8 @@
     "2026-10-13",
     "2026-10-14",
     "2026-10-15",
-    "2026-10-16"
+    "2026-10-16",
+    "2026-10-19"
    ],
    "valores": [
     6.2086,
@@ -4814,9 +4821,11 @@
     5.0096,
     5.0441,
     5.0521,
-    5.0826
+    5.0826,
+    5.0564
    ],
    "fontes": [
+    "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
@@ -5912,7 +5921,11 @@
    "2026-10-10",
    "2026-10-11",
    "2026-10-12",
-   "2026-10-13"
+   "2026-10-13",
+   "2026-10-14",
+   "2026-10-15",
+   "2026-10-16",
+   "2026-10-17"
   ],
   "chuva_mm": [
    2.4,
@@ -6565,7 +6578,11 @@
    5.2,
    15.5,
    24.1,
-   10.7
+   10.7,
+   6.7,
+   11.9,
+   1.6,
+   0.3
   ],
   "temp_max": [
    28.4,
@@ -7218,19 +7235,23 @@
    23.2,
    19.2,
    20.4,
-   21.4
+   21.4,
+   22.8,
+   22.2,
+   21.3,
+   18.2
   ]
  },
  "resumo": {
   "milho": {
    "ultimo": 69.0,
-   "data": "2026-10-16",
+   "data": "2026-10-19",
    "var_30d_pct": -1.4
   },
   "soja": {
    "ultimo": 136.0,
-   "data": "2026-10-15",
-   "var_30d_pct": -2.2
+   "data": "2026-10-19",
+   "var_30d_pct": -2.9
   },
   "trigo": {
    "ultimo": 75.0,
@@ -7238,26 +7259,26 @@
    "var_30d_pct": 4.2
   },
   "dolar": {
-   "ultimo": 5.0826,
-   "data": "2026-10-16",
-   "var_30d_pct": -1.4
+   "ultimo": 5.0564,
+   "data": "2026-10-19",
+   "var_30d_pct": -1.1
   }
  },
  "correlacoes": {
   "milho": {
-   "chuva_30d": 0.124,
+   "chuva_30d": 0.126,
    "temp_30d": -0.008,
-   "n": 441
+   "n": 444
   },
   "soja": {
-   "chuva_30d": 0.283,
-   "temp_30d": 0.002,
-   "n": 429
+   "chuva_30d": 0.302,
+   "temp_30d": -0.002,
+   "n": 431
   },
   "trigo": {
-   "chuva_30d": 0.149,
-   "temp_30d": -0.444,
-   "n": 426
+   "chuva_30d": 0.156,
+   "temp_30d": -0.443,
+   "n": 427
   }
  },
  "fontes_urls": {
@@ -7278,7 +7299,7 @@
      0.0,
      -0.01
     ],
-    "n": 31
+    "n": 30
    },
    {
     "a": "milho",
@@ -7305,14 +7326,14 @@
      0.05,
      -0.11
     ],
-    "n": 27
+    "n": 26
    },
    {
     "a": "soja",
     "b": "dolar",
     "valores": [
      0.2,
-     0.21
+     0.22
     ],
     "n": 61
    },

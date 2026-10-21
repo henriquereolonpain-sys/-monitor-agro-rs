@@ -1,5 +1,5 @@
 {
- "atualizado_em": "2026-10-20T23:39:11",
+ "atualizado_em": "2026-10-21T23:55:02",
  "precos": {
   "milho": {
    "datas": [
@@ -448,7 +448,8 @@
     "2026-10-15",
     "2026-10-16",
     "2026-10-19",
-    "2026-10-20"
+    "2026-10-20",
+    "2026-10-21"
    ],
    "valores": [
     70.5,
@@ -896,7 +897,8 @@
     69.0,
     69.0,
     69.0,
-    69.0
+    69.0,
+    68.5
    ],
    "fontes": [
     "NA · Milho CMA · Passo Fundo/RS",
@@ -1251,6 +1253,7 @@
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
@@ -1780,7 +1783,8 @@
     "2026-10-09",
     "2026-10-14",
     "2026-10-15",
-    "2026-10-19"
+    "2026-10-19",
+    "2026-10-21"
    ],
    "valores": [
     125.0,
@@ -2214,7 +2218,8 @@
     136.0,
     136.0,
     136.0,
-    136.0
+    136.0,
+    135.0
    ],
    "fontes": [
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
@@ -2646,6 +2651,7 @@
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
     "NA · Sindicatos e Cooperativas · Nonoai/RS",
+    "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS"
@@ -3079,7 +3085,8 @@
     "2026-09-22",
     "2026-09-28",
     "2026-10-06",
-    "2026-10-15"
+    "2026-10-15",
+    "2026-10-21"
    ],
    "valores": [
     65.0,
@@ -3508,7 +3515,8 @@
     74.0,
     75.0,
     75.0,
-    75.0
+    75.0,
+    73.0
    ],
    "fontes": [
     "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
@@ -3935,6 +3943,7 @@
     "NA · Trigo Mercado Físico · Nonoai/RS",
     "NA · Trigo Mercado Físico · Nonoai/RS",
     "NA · Trigo Mercado Físico · Nonoai/RS",
+    "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
     "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
     "NA · Trigo Mercado Físico · Não-Me-Toque/RS",
     "NA · Trigo Mercado Físico · Não-Me-Toque/RS"
@@ -4383,7 +4392,8 @@
     "2026-10-15",
     "2026-10-16",
     "2026-10-19",
-    "2026-10-20"
+    "2026-10-20",
+    "2026-10-21"
    ],
    "valores": [
     6.2086,
@@ -4827,9 +4837,11 @@
     5.0521,
     5.0826,
     5.0564,
-    5.014
+    5.014,
+    5.0277
    ],
    "fontes": [
+    "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
@@ -5931,7 +5943,8 @@
    "2026-10-14",
    "2026-10-15",
    "2026-10-16",
-   "2026-10-17"
+   "2026-10-17",
+   "2026-10-18"
   ],
   "chuva_mm": [
    2.4,
@@ -6588,7 +6601,8 @@
    6.7,
    11.9,
    1.6,
-   0.3
+   0.3,
+   0.0
   ],
   "temp_max": [
    28.4,
@@ -7245,29 +7259,30 @@
    22.8,
    22.2,
    21.3,
-   18.2
+   18.2,
+   16.4
   ]
  },
  "resumo": {
   "milho": {
-   "ultimo": 69.0,
-   "data": "2026-10-20",
-   "var_30d_pct": -1.4
+   "ultimo": 68.5,
+   "data": "2026-10-21",
+   "var_30d_pct": -2.1
   },
   "soja": {
-   "ultimo": 136.0,
-   "data": "2026-10-19",
-   "var_30d_pct": -2.9
+   "ultimo": 135.0,
+   "data": "2026-10-21",
+   "var_30d_pct": -3.6
   },
   "trigo": {
-   "ultimo": 75.0,
-   "data": "2026-10-15",
-   "var_30d_pct": 4.2
+   "ultimo": 73.0,
+   "data": "2026-10-21",
+   "var_30d_pct": -1.4
   },
   "dolar": {
-   "ultimo": 5.014,
-   "data": "2026-10-20",
-   "var_30d_pct": -1.9
+   "ultimo": 5.0277,
+   "data": "2026-10-21",
+   "var_30d_pct": -1.6
   }
  },
  "correlacoes": {
@@ -7303,7 +7318,7 @@
     "b": "soja",
     "valores": [
      0.0,
-     -0.01
+     0.03
     ],
     "n": 29
    },
@@ -7314,14 +7329,14 @@
      0.01,
      null
     ],
-    "n": 10
+    "n": 11
    },
    {
     "a": "milho",
     "b": "dolar",
     "valores": [
      -0.04,
-     0.03
+     0.02
     ],
     "n": 61
    },
@@ -7329,8 +7344,8 @@
     "a": "soja",
     "b": "trigo",
     "valores": [
-     0.05,
-     -0.1
+     0.06,
+     0.03
     ],
     "n": 25
    },
@@ -7339,7 +7354,7 @@
     "b": "dolar",
     "valores": [
      0.2,
-     0.22
+     0.21
     ],
     "n": 61
    },

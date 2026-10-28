@@ -1732,27 +1732,29 @@ data,commodity,preco,fonte,coletado_em
 2026-10-09,soja,136.0,NA · Sindicatos e Cooperativas · Nonoai/RS,2026-10-13T02:26:50
 2026-10-13,dolar,5.0096,NA · Câmbio PTAX · Dólar,2026-10-27T00:15:06
 2026-10-13,milho,70.0,NA · Milho CMA · Passo Fundo/RS,2026-10-27T00:15:05
-2026-10-14,dolar,5.0441,NA · Câmbio PTAX · Dólar,2026-10-27T00:15:06
-2026-10-14,milho,69.0,NA · Milho CMA · Passo Fundo/RS,2026-10-27T00:15:05
-2026-10-14,soja,136.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-10-27T00:15:05
-2026-10-15,dolar,5.0521,NA · Câmbio PTAX · Dólar,2026-10-27T00:15:06
-2026-10-15,milho,69.0,NA · Milho CMA · Passo Fundo/RS,2026-10-27T00:15:05
-2026-10-15,soja,136.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-10-27T00:15:05
-2026-10-15,trigo,75.0,NA · Trigo Mercado Físico · Não-Me-Toque/RS,2026-10-27T00:15:06
-2026-10-16,dolar,5.0826,NA · Câmbio PTAX · Dólar,2026-10-27T00:15:06
-2026-10-16,milho,69.0,NA · Milho CMA · Passo Fundo/RS,2026-10-27T00:15:05
-2026-10-19,dolar,5.0564,NA · Câmbio PTAX · Dólar,2026-10-27T00:15:06
-2026-10-19,milho,69.0,NA · Milho CMA · Passo Fundo/RS,2026-10-27T00:15:05
-2026-10-19,soja,136.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-10-27T00:15:05
-2026-10-20,dolar,5.014,NA · Câmbio PTAX · Dólar,2026-10-27T00:15:06
-2026-10-20,milho,69.0,NA · Milho CMA · Passo Fundo/RS,2026-10-27T00:15:05
-2026-10-21,dolar,5.0277,NA · Câmbio PTAX · Dólar,2026-10-27T00:15:06
-2026-10-21,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-10-27T00:15:05
-2026-10-21,soja,135.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-10-27T00:15:05
-2026-10-21,trigo,73.0,NA · Trigo Mercado Físico · Não-Me-Toque/RS,2026-10-27T00:15:06
-2026-10-22,dolar,5.0383,NA · Câmbio PTAX · Dólar,2026-10-27T00:15:06
-2026-10-22,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-10-27T00:15:05
-2026-10-23,dolar,5.0377,NA · Câmbio PTAX · Dólar,2026-10-27T00:15:06
-2026-10-23,milho,68.0,NA · Milho CMA · Passo Fundo/RS,2026-10-27T00:15:05
-2026-10-26,dolar,5.5007,NA · Câmbio PTAX · Dólar,2026-10-27T00:15:06
-2026-10-26,milho,68.0,NA · Milho CMA · Passo Fundo/RS,2026-10-27T00:15:05
+2026-10-14,dolar,5.0441,NA · Câmbio PTAX · Dólar,2026-10-28T00:16:28
+2026-10-14,milho,69.0,NA · Milho CMA · Passo Fundo/RS,2026-10-28T00:16:27
+2026-10-14,soja,136.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-10-28T00:16:27
+2026-10-15,dolar,5.0521,NA · Câmbio PTAX · Dólar,2026-10-28T00:16:28
+2026-10-15,milho,69.0,NA · Milho CMA · Passo Fundo/RS,2026-10-28T00:16:27
+2026-10-15,soja,136.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-10-28T00:16:27
+2026-10-15,trigo,75.0,NA · Trigo Mercado Físico · Não-Me-Toque/RS,2026-10-28T00:16:28
+2026-10-16,dolar,5.0826,NA · Câmbio PTAX · Dólar,2026-10-28T00:16:28
+2026-10-16,milho,69.0,NA · Milho CMA · Passo Fundo/RS,2026-10-28T00:16:27
+2026-10-19,dolar,5.0564,NA · Câmbio PTAX · Dólar,2026-10-28T00:16:28
+2026-10-19,milho,69.0,NA · Milho CMA · Passo Fundo/RS,2026-10-28T00:16:27
+2026-10-19,soja,136.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-10-28T00:16:27
+2026-10-20,dolar,5.014,NA · Câmbio PTAX · Dólar,2026-10-28T00:16:28
+2026-10-20,milho,69.0,NA · Milho CMA · Passo Fundo/RS,2026-10-28T00:16:27
+2026-10-21,dolar,5.0277,NA · Câmbio PTAX · Dólar,2026-10-28T00:16:28
+2026-10-21,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-10-28T00:16:27
+2026-10-21,soja,135.0,NA · Sindicatos e Cooperativas · Não-Me-Toque/RS,2026-10-28T00:16:27
+2026-10-21,trigo,73.0,NA · Trigo Mercado Físico · Não-Me-Toque/RS,2026-10-28T00:16:28
+2026-10-22,dolar,5.0383,NA · Câmbio PTAX · Dólar,2026-10-28T00:16:28
+2026-10-22,milho,68.5,NA · Milho CMA · Passo Fundo/RS,2026-10-28T00:16:27
+2026-10-23,dolar,5.0377,NA · Câmbio PTAX · Dólar,2026-10-28T00:16:28
+2026-10-23,milho,68.0,NA · Milho CMA · Passo Fundo/RS,2026-10-28T00:16:27
+2026-10-26,dolar,5.5007,NA · Câmbio PTAX · Dólar,2026-10-28T00:16:28
+2026-10-26,milho,68.0,NA · Milho CMA · Passo Fundo/RS,2026-10-28T00:16:27
+2026-10-27,dolar,5.3346,NA · Câmbio PTAX · Dólar,2026-10-28T00:16:28
+2026-10-27,milho,68.0,NA · Milho CMA · Passo Fundo/RS,2026-10-28T00:16:27

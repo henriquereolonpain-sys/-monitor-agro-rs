@@ -1,5 +1,5 @@
 {
- "atualizado_em": "2026-11-05T01:19:26",
+ "atualizado_em": "2026-11-06T01:24:12",
  "precos": {
   "milho": {
    "datas": [
@@ -458,7 +458,8 @@
     "2026-10-29",
     "2026-10-30",
     "2026-11-03",
-    "2026-11-04"
+    "2026-11-04",
+    "2026-11-05"
    ],
    "valores": [
     70.5,
@@ -916,6 +917,7 @@
     68.0,
     68.0,
     68.0,
+    68.5,
     68.5
    ],
    "fontes": [
@@ -1271,6 +1273,7 @@
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
     "NA · Sindicatos e Cooperativas · Não-Me-Toque/RS",
+    "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
     "NA · Milho CMA · Passo Fundo/RS",
@@ -4438,7 +4441,8 @@
     "2026-10-29",
     "2026-10-30",
     "2026-11-03",
-    "2026-11-04"
+    "2026-11-04",
+    "2026-11-05"
    ],
    "valores": [
     6.2086,
@@ -4892,9 +4896,11 @@
     5.3744,
     5.4212,
     5.4935,
-    5.4778
+    5.4778,
+    5.4621
    ],
    "fontes": [
+    "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
     "NA · Câmbio PTAX · Dólar",
@@ -6022,7 +6028,8 @@
    "2026-10-30",
    "2026-10-31",
    "2026-11-01",
-   "2026-11-02"
+   "2026-11-02",
+   "2026-11-03"
   ],
   "chuva_mm": [
    2.4,
@@ -6695,7 +6702,8 @@
    12.1,
    2.3,
    1.0,
-   1.9
+   1.9,
+   4.8
   ],
   "temp_max": [
    28.4,
@@ -7368,13 +7376,14 @@
    22.6,
    24.6,
    27.9,
-   27.5
+   27.5,
+   28.9
   ]
  },
  "resumo": {
   "milho": {
    "ultimo": 68.5,
-   "data": "2026-11-04",
+   "data": "2026-11-05",
    "var_30d_pct": -3.5
   },
   "soja": {
@@ -7388,8 +7397,8 @@
    "var_30d_pct": -4.0
   },
   "dolar": {
-   "ultimo": 5.4778,
-   "data": "2026-11-04",
+   "ultimo": 5.4621,
+   "data": "2026-11-05",
    "var_30d_pct": 9.9
   }
  },
@@ -7397,7 +7406,7 @@
   "milho": {
    "chuva_30d": 0.129,
    "temp_30d": -0.01,
-   "n": 454
+   "n": 455
   },
   "soja": {
    "chuva_30d": 0.316,
@@ -7462,7 +7471,7 @@
     "b": "dolar",
     "valores": [
      0.16,
-     0.08
+     0.09
     ],
     "n": 58
    },
